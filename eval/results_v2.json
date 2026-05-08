@@ -1,0 +1,23 @@
+{
+  "version": "v2",
+  "timestamp": "2025-01-01T00:00:00.000Z",
+  "totalCases": 10,
+  "passed": 0,
+  "failed": 10,
+  "accuracy": 0.0,
+  "avgScore": 0.0,
+  "avgDurationMs": 0,
+  "note": "Placeholder — run `VERSION=v2 npm run eval` to populate with real results after v2 changes.",
+  "results": [
+    { "id": "tc_001", "passed": false, "score": 0, "interpretation": null, "editPlan": null, "qualityCheck": null, "assistantMessage": "", "failureReason": "not_yet_run", "durationMs": 0 },
+    { "id": "tc_002", "passed": false, "score": 0, "interpretation": null, "editPlan": null, "qualityCheck": null, "assistantMessage": "", "failureReason": "not_yet_run", "durationMs": 0 },
+    { "id": "tc_003", "passed": false, "score": 0, "interpretation": null, "editPlan": null, "qualityCheck": null, "assistantMessage": "", "failureReason": "not_yet_run", "durationMs": 0 },
+    { "id": "tc_004", "passed": false, "score": 0, "interpretation": null, "editPlan": null, "qualityCheck": null, "assistantMessage": "", "failureReason": "not_yet_run", "durationMs": 0 },
+    { "id": "tc_005", "passed": false, "score": 0, "interpretation": null, "editPlan": null, "qualityCheck": null, "assistantMessage": "", "failureReason": "not_yet_run", "durationMs": 0 },
+    { "id": "tc_006", "passed": false, "score": 0, "interpretation": null, "editPlan": null, "qualityCheck": null, "assistantMessage": "", "failureReason": "not_yet_run", "durationMs": 0 },
+    { "id": "tc_007", "passed": false, "score": 0, "interpretation": null, "editPlan": null, "qualityCheck": null, "assistantMessage": "", "failureReason": "not_yet_run", "durationMs": 0 },
+    { "id": "tc_008", "passed": false, "score": 0, "interpretation": null, "editPlan": null, "qualityCheck": null, "assistantMessage": "", "failureReason": "not_yet_run", "durationMs": 0 },
+    { "id": "tc_009", "passed": false, "score": 0, "interpretation": null, "editPlan": null, "qualityCheck": null, "assistantMessage": "", "failureReason": "not_yet_run", "durationMs": 0 },
+    { "id": "tc_010", "passed": false, "score": 0, "interpretation": null, "editPlan": null, "qualityCheck": null, "assistantMessage": "", "failureReason": "not_yet_run", "durationMs": 0 }
+  ]
+}

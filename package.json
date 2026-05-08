@@ -1,0 +1,33 @@
+{
+  "name": "zyntri-studio",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "eval": "npx ts-node --project tsconfig.eval.json eval/run_eval.ts"
+  },
+  "dependencies": {
+    "clsx": "2.1.1",
+    "next": "15.5.18",
+    "openai": "4.47.1",
+    "react": "18.3.1",
+    "react-dom": "18.3.1",
+    "sharp": "0.33.4",
+    "uuid": "11.1.1"
+  },
+  "devDependencies": {
+    "@types/node": "20.12.12",
+    "@types/react": "18.3.3",
+    "@types/react-dom": "18.3.0",
+    "@types/uuid": "10.0.0",
+    "dotenv": "16.4.5",
+    "eslint": "9.39.4",
+    "eslint-config-next": "15.5.18",
+    "ts-node": "10.9.2",
+    "tsconfig-paths": "4.2.0",
+    "typescript": "5.4.5"
+  }
+}

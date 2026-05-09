@@ -21,8 +21,13 @@ import type {
 import { SUPPORTED_SURFACES } from "../../types";
 
 const SYSTEM_PROMPT = `You are ZyntriStudio's vision analyst.
-Your job is to look at a base photo (and an optional reference image) and
-understand what surface the user wants to restyle.
+Your job is to look at a design/pattern/artwork image (the first image) and an
+optional surface photo (the second image), then understand what surface the user
+wants to apply the design onto.
+
+The FIRST image is always the design, pattern, or artwork to be applied.
+The SECOND image (if provided) is the target surface or object.
+If no second image is provided, infer the target surface from the user's instruction.
 
 Supported surfaces: shirt, wall, mug, notebook, poster, cardboard_box, field_grass.
 
@@ -39,7 +44,7 @@ Respond ONLY with a valid JSON object matching this exact schema:
 }
 
 Rules:
-- detectedSurfaces: list every supported surface visible in the image.
+- detectedSurfaces: list every supported surface visible in the surface photo (second image), or inferred from the instruction if no surface photo is provided.
 - primarySurface: the single best match for the user's instruction, or null if none.
 - isAmbiguous: true when two or more surfaces are equally plausible targets.
 - clarificationQuestion: a short, friendly question to ask the user when isAmbiguous is true.
@@ -50,26 +55,26 @@ Rules:
 Do NOT include any text outside the JSON object.`;
 
 export async function interpretRequest(
-  baseImageB64: string,
+  designImageB64: string,
   instruction: string,
   surfaceHint: SurfaceCategory,
-  referenceImageB64?: string,
+  surfaceImageB64?: string,
   history: ChatMessage[] = []
 ): Promise<InterpretationResult> {
   const client = getOpenAIClient();
 
-  // Build the image content blocks
+  // First image = design/pattern, second image (optional) = target surface
   const imageBlocks: OpenAI.Chat.ChatCompletionContentPart[] = [
     {
       type: "image_url",
-      image_url: { url: baseImageB64, detail: "high" },
+      image_url: { url: designImageB64, detail: "high" },
     },
   ];
 
-  if (referenceImageB64) {
+  if (surfaceImageB64) {
     imageBlocks.push({
       type: "image_url",
-      image_url: { url: referenceImageB64, detail: "high" },
+      image_url: { url: surfaceImageB64, detail: "high" },
     });
   }
 
@@ -85,7 +90,8 @@ export async function interpretRequest(
       type: "text",
       text: `User instruction: "${instruction}"
 Surface hint from UI: ${surfaceHint === "auto" ? "none (auto-detect)" : surfaceHint}
-${referenceImageB64 ? "A reference image has been provided (second image above)." : "No reference image provided."}
+Image 1 (above): the design, pattern, or artwork to apply.
+${surfaceImageB64 ? "Image 2 (above): the target surface or object photo." : "No surface photo provided — infer the target surface from the instruction."}
 Supported surfaces: ${SUPPORTED_SURFACES.join(", ")}`,
     },
   ];

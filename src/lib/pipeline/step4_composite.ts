@@ -65,32 +65,33 @@ function buildGenerationPrompt(
     .join(" ");
 }
 
-// ─── Sharp-based overlay (used when reference image is provided) ──────────────
+// ─── Sharp-based overlay (used when surface photo is provided) ───────────────
+// Composites the design image ON TOP of the surface photo.
 
 async function sharpOverlay(
-  baseB64: string,
-  referenceB64: string,
+  designB64: string,
+  surfaceB64: string,
   plan: EditPlan
 ): Promise<string> {
   // Strip data URL prefix
-  const baseBuffer = Buffer.from(baseB64.replace(/^data:image\/\w+;base64,/, ""), "base64");
-  const refBuffer = Buffer.from(referenceB64.replace(/^data:image\/\w+;base64,/, ""), "base64");
+  const surfaceBuffer = Buffer.from(surfaceB64.replace(/^data:image\/\w+;base64,/, ""), "base64");
+  const designBuffer = Buffer.from(designB64.replace(/^data:image\/\w+;base64,/, ""), "base64");
 
-  const baseMeta = await sharp(baseBuffer).metadata();
-  const baseWidth = baseMeta.width ?? 512;
-  const baseHeight = baseMeta.height ?? 512;
+  const surfaceMeta = await sharp(surfaceBuffer).metadata();
+  const surfaceWidth = surfaceMeta.width ?? 512;
+  const surfaceHeight = surfaceMeta.height ?? 512;
 
-  // Resize reference to match base dimensions
-  const resizedRef = await sharp(refBuffer)
-    .resize(baseWidth, baseHeight, { fit: "cover" })
+  // Resize design to match surface dimensions
+  const resizedDesign = await sharp(designBuffer)
+    .resize(surfaceWidth, surfaceHeight, { fit: "cover" })
     .toBuffer();
 
-  // Apply opacity by creating a semi-transparent version of the reference.
+  // Apply opacity by creating a semi-transparent version of the design.
   // sharp's composite does not accept an opacity parameter directly;
   // we bake the opacity into the alpha channel instead.
   const opacityInt = Math.round(plan.opacity * 255);
 
-  const refWithAlpha = await sharp(resizedRef)
+  const designWithAlpha = await sharp(resizedDesign)
     .ensureAlpha()
     .raw()
     .toBuffer({ resolveWithObject: true })
@@ -114,11 +115,11 @@ async function sharpOverlay(
     ? "soft-light"
     : "over";
 
-  // Composite: base image + reference overlay
-  const composited = await sharp(baseBuffer)
+  // Composite: surface photo as base, design overlaid on top
+  const composited = await sharp(surfaceBuffer)
     .composite([
       {
-        input: refWithAlpha,
+        input: designWithAlpha,
         blend: blendMode as import("sharp").Blend,
       },
     ])
@@ -131,17 +132,17 @@ async function sharpOverlay(
 // ─── Main composite function ──────────────────────────────────────────────────
 
 export async function executeEdit(
-  baseImageB64: string,
+  designImageB64: string,
   plan: EditPlan,
   instruction: string,
-  referenceImageB64?: string
+  surfaceImageB64?: string
 ): Promise<string> {
   const client = getOpenAIClient();
 
-  // If we have a reference image, try sharp compositing first (fast, no extra API cost)
-  if (referenceImageB64) {
+  // If we have a surface photo, composite the design onto it
+  if (surfaceImageB64) {
     try {
-      const composited = await sharpOverlay(baseImageB64, referenceImageB64, plan);
+      const composited = await sharpOverlay(designImageB64, surfaceImageB64, plan);
       return composited;
     } catch (err) {
       console.warn("[step4] Sharp compositing failed, falling back to generation:", err);
@@ -149,7 +150,7 @@ export async function executeEdit(
   }
 
   // Fall back to DALL-E 3 generation
-  const prompt = buildGenerationPrompt(plan, instruction, !!referenceImageB64);
+  const prompt = buildGenerationPrompt(plan, instruction, !!surfaceImageB64);
 
   const response = await client.images.generate({
     model: "dall-e-3",

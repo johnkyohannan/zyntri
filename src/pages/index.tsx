@@ -295,16 +295,16 @@ export default function Home() {
 
         <div className={styles.sidebarBody}>
           <ImageDropZone
-            label="Base Photo"
-            sublabel="The photo containing the surface to restyle"
+            label="Design / Pattern / Artwork"
+            sublabel="The texture, pattern, or design you want to apply"
             value={baseImage}
             onChange={setBaseImage}
             required
           />
 
           <ImageDropZone
-            label="Reference Image"
-            sublabel="Optional: texture, pattern, artwork, or design to apply"
+            label="Surface Photo"
+            sublabel="Optional: the object or surface to apply the design onto"
             value={referenceImage}
             onChange={setReferenceImage}
           />
@@ -364,16 +364,16 @@ export default function Home() {
               <div className={styles.emptyIcon}>✦</div>
               <p className={styles.emptyTitle}>Start a conversation</p>
               <p className={styles.emptySub}>
-                Upload a base photo, optionally add a reference image, then describe
-                what you want to change.
+                Upload your design or pattern, optionally add a surface photo,
+                then describe how you want it applied.
               </p>
               <div className={styles.examplePrompts}>
                 <p className={styles.examplesLabel}>Try asking:</p>
                 {[
-                  "Apply a floral pattern to the shirt",
-                  "Make the wall look like exposed brick",
-                  "Wrap the mug with a hand-drawn floral design",
-                  "Put a soccer logo on the grass field",
+                  "Apply this floral pattern to a shirt",
+                  "Put this design on a wall",
+                  "Wrap this artwork around a mug",
+                  "Paint this logo onto a grass field",
                 ].map((p) => (
                   <button
                     key={p}
@@ -411,7 +411,7 @@ export default function Home() {
 
         <div className={styles.inputArea}>
           {!baseImage && (
-            <p className={styles.inputHint}>Upload a base photo to get started</p>
+            <p className={styles.inputHint}>Upload a design or pattern to get started</p>
           )}
           <div className={styles.inputRow}>
             <textarea
@@ -419,8 +419,8 @@ export default function Home() {
               className={styles.textarea}
               placeholder={
                 baseImage
-                  ? "Describe the edit… (Enter to send, Shift+Enter for newline)"
-                  : "Upload a base photo first"
+                  ? "Describe how to apply the design… (Enter to send, Shift+Enter for newline)"
+                  : "Upload a design or pattern first"
               }
               value={instruction}
               onChange={(e) => setInstruction(e.target.value)}

@@ -9,13 +9,9 @@
  *   5. Quality control (GPT-4o vision)
  *   6. Conversational response (GPT-4o)
  *
- * Why this goes beyond Project 4 / one-shot extraction:
- *   - Multimodal input: base image + optional reference image + text
- *   - Multi-step chained LLM calls (Steps 1, 2, 5, 6 are separate calls)
- *   - Structured intermediate outputs (InterpretationResult, EditPlan)
- *   - Conditional branching (clarification gate, safety gate)
- *   - Quality control loop with actionable feedback
- *   - Multi-turn conversation history carried through all steps
+ * Input convention (post-flip):
+ *   baseImageB64     = the design, pattern, or artwork to apply
+ *   referenceImageB64 = the target surface or object photo (optional)
  */
 
 import { interpretRequest } from "./step1_interpret";
@@ -30,8 +26,8 @@ export async function runPipeline(req: EditRequest): Promise<EditResponse> {
     sessionId,
     instruction,
     surfaceHint,
-    baseImageB64,
-    referenceImageB64,
+    baseImageB64,       // design / pattern / artwork
+    referenceImageB64,  // surface photo (optional)
     conversationHistory,
   } = req;
 
@@ -39,10 +35,10 @@ export async function runPipeline(req: EditRequest): Promise<EditResponse> {
   let interpretation;
   try {
     interpretation = await interpretRequest(
-      baseImageB64,
+      baseImageB64,        // design image
       instruction,
       surfaceHint,
-      referenceImageB64,
+      referenceImageB64,   // surface photo
       conversationHistory
     );
   } catch (err) {
@@ -125,7 +121,7 @@ export async function runPipeline(req: EditRequest): Promise<EditResponse> {
       interpretation,
       instruction,
       surfaceHint,
-      referenceImageB64,
+      baseImageB64,        // pass the design image for plan context
       conversationHistory
     );
   } catch (err) {
@@ -136,14 +132,13 @@ export async function runPipeline(req: EditRequest): Promise<EditResponse> {
   let outputImageB64: string | null = null;
   try {
     outputImageB64 = await executeEdit(
-      baseImageB64,
+      baseImageB64,        // design image
       plan,
       instruction,
-      referenceImageB64
+      referenceImageB64    // surface photo
     );
   } catch (err) {
     console.error("[pipeline] Edit execution failed:", err);
-    // Don't abort – return plan + error message, no image
     const msg = await generateAssistantMessage(
       instruction,
       interpretation,

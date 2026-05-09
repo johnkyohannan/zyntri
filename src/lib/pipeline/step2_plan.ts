@@ -46,7 +46,7 @@ export async function generateEditPlan(
   interpretation: InterpretationResult,
   instruction: string,
   surfaceHint: SurfaceCategory,
-  referenceImageB64?: string,
+  designImageB64?: string,
   history: ChatMessage[] = []
 ): Promise<EditPlan> {
   const client = getOpenAIClient();
@@ -55,10 +55,10 @@ export async function generateEditPlan(
 
   const contentParts: OpenAI.Chat.ChatCompletionContentPart[] = [];
 
-  if (referenceImageB64) {
+  if (designImageB64) {
     contentParts.push({
       type: "image_url",
-      image_url: { url: referenceImageB64, detail: "low" },
+      image_url: { url: designImageB64, detail: "low" },
     });
   }
 
@@ -68,7 +68,7 @@ export async function generateEditPlan(
 User instruction: "${instruction}"
 Detected surfaces: ${interpretation.detectedSurfaces.join(", ") || "none"}
 Confidence: ${interpretation.confidence}
-${referenceImageB64 ? "Reference image provided (see above)." : "No reference image."}
+${designImageB64 ? "Design/pattern image provided (see above) — this is what gets applied to the surface." : "No design image."}
 ${history.length > 0 ? `This is a refinement turn. Previous conversation context:\n${history.slice(-3).map(m => `${m.role}: ${m.content}`).join("\n")}` : ""}`,
   });
 

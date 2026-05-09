@@ -301,10 +301,28 @@
   flex: 1;
 }
 
-.emptyIcon {
-  font-size: 36px;
-  color: var(--accent);
-  opacity: 0.6;
+.welcomeMessage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 8px;
+  padding: 20px 32px;
+  background: var(--accent-dim);
+  border: 1px solid rgba(108, 99, 255, 0.25);
+  border-radius: var(--radius);
+}
+
+.welcomeTitle {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: -0.3px;
+}
+
+.welcomeSub {
+  font-size: 13px;
+  color: var(--text-muted);
 }
 
 .emptyTitle {

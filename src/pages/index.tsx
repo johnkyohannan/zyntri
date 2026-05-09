@@ -361,8 +361,11 @@ export default function Home() {
         <div className={styles.chatMessages} role="log" aria-live="polite">
           {messages.length === 0 && !loading && (
             <div className={styles.emptyState}>
-              <div className={styles.emptyIcon}>✦</div>
-              <p className={styles.emptyTitle}>Start a conversation</p>
+              <div className={styles.welcomeMessage}>
+                <p className={styles.welcomeTitle}>Welcome to ZyntriStudio</p>
+                <p className={styles.welcomeSub}>Your conversational surface-restyling assistant</p>
+              </div>
+              <p className={styles.emptyTitle}>Get started</p>
               <p className={styles.emptySub}>
                 Upload your design or pattern, optionally add a surface photo,
                 then describe how you want it applied.

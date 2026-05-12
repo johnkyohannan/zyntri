@@ -140,6 +140,17 @@ function MessageBubble({ msg }: { msg: ChatMessage }) {
       </div>
       <p className={styles.bubbleText}>{msg.content}</p>
 
+      {msg.mockupSteps && msg.mockupSteps.length > 0 && (
+        <details className={styles.planDetails}>
+          <summary>Mockup steps</summary>
+          <ol className={styles.mockupStepsList}>
+            {msg.mockupSteps.map((s, i) => (
+              <li key={i}>{s}</li>
+            ))}
+          </ol>
+        </details>
+      )}
+
       {msg.editPlan && (
         <details className={styles.planDetails}>
           <summary>Edit plan</summary>
@@ -250,6 +261,7 @@ export default function Home() {
         editPlan: data.editPlan ?? undefined,
         outputImageUrl: data.outputImageB64 ?? undefined,
         qualityCheck: data.qualityCheck ?? undefined,
+        mockupSteps: data.mockupSteps?.length ? data.mockupSteps : undefined,
       };
 
       setMessages((prev) => [...prev, assistantMsg]);

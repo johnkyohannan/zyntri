@@ -84,6 +84,7 @@ export interface ChatMessage {
   editPlan?: EditPlan;
   outputImageUrl?: string;
   qualityCheck?: QualityCheckResult;
+  mockupSteps?: string[];   // what the compositor did to make it look real
 }
 
 // ─── API request / response shapes ───────────
@@ -104,6 +105,7 @@ export interface EditResponse {
   outputImageB64: string | null;
   qualityCheck: QualityCheckResult | null;
   assistantMessage: string;
+  mockupSteps: string[];          // human-readable list of what was applied
   clarificationNeeded: boolean;
   clarificationQuestion: string | null;
   error: string | null;

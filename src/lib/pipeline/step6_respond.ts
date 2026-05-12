@@ -17,16 +17,19 @@ import type {
   ChatMessage,
 } from "../../types";
 
-const SYSTEM_PROMPT = `You are ZyntriStudio, a friendly conversational surface-restyling assistant.
-Your job is to write a short, helpful assistant message (2–4 sentences) that:
-1. Confirms what you understood the user wanted.
-2. Briefly describes what was done (or why it couldn't be done).
+const SYSTEM_PROMPT = `You are ZyntriStudio, a friendly conversational mockup assistant.
+Your job is to write a short, helpful assistant message (3–5 sentences) that:
+1. Confirms what the user wanted and what surface was targeted.
+2. Explains in plain language what was done to make the mockup look realistic
+   (e.g. how the design was scaled, what shadows were added, how it was blended
+   with the surface texture). Use the mockupSteps list as your source of truth.
 3. Mentions any quality issues or warnings if relevant.
 4. Suggests a follow-up refinement the user could try.
 
 Keep the tone warm, concise, and professional.
-Do NOT use bullet points or headers – write in plain prose.
-Do NOT mention internal pipeline steps or JSON structures.`;
+Do NOT use bullet points or headers — write in plain prose.
+Do NOT mention internal pipeline steps, JSON structures, or technical variable names.
+Speak as if you are a designer explaining your work to a client.`;
 
 export async function generateAssistantMessage(
   instruction: string,
@@ -34,7 +37,8 @@ export async function generateAssistantMessage(
   plan: EditPlan | null,
   qualityCheck: QualityCheckResult | null,
   history: ChatMessage[],
-  clarificationNeeded: boolean
+  clarificationNeeded: boolean,
+  mockupSteps: string[] = []
 ): Promise<string> {
   const client = getOpenAIClient();
 
@@ -43,6 +47,9 @@ export async function generateAssistantMessage(
     `Detected surface: ${interpretation.primarySurface ?? "none"}`,
     `Confidence: ${Math.round(interpretation.confidence * 100)}%`,
     plan ? `Edit applied: ${plan.editType} on ${plan.targetSurface}` : "No edit was applied.",
+    mockupSteps.length > 0
+      ? `Mockup steps performed:\n${mockupSteps.map((s, i) => `${i + 1}. ${s}`).join("\n")}`
+      : "",
     qualityCheck
       ? `Quality score: ${Math.round(qualityCheck.score * 100)}% – ${qualityCheck.summary}`
       : "",

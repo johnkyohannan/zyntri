@@ -307,22 +307,19 @@
   align-items: center;
   gap: 6px;
   margin-bottom: 8px;
-  padding: 20px 32px;
-  background: var(--accent-dim);
-  border: 1px solid rgba(108, 99, 255, 0.25);
-  border-radius: var(--radius);
 }
 
 .welcomeTitle {
-  font-size: 22px;
+  font-size: 28px;
   font-weight: 700;
-  color: var(--text-primary);
-  letter-spacing: -0.3px;
+  color: #a78bfa;
+  letter-spacing: -0.5px;
 }
 
 .welcomeSub {
   font-size: 13px;
-  color: var(--text-muted);
+  color: #7c6fcd;
+  letter-spacing: 0.2px;
 }
 
 .emptyTitle {
@@ -437,6 +434,18 @@
   text-transform: uppercase;
   letter-spacing: 0.4px;
   user-select: none;
+}
+
+.mockupStepsList {
+  list-style: decimal;
+  padding-left: 16px;
+  margin-top: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  color: var(--text-secondary);
+  font-size: 12px;
+  line-height: 1.5;
 }
 
 .planGrid {

@@ -5,12 +5,12 @@
  *   1. Vision + text interpretation (GPT-4o multimodal)
  *   2. Edit plan generation (GPT-4o)
  *   3. Clarification gate (returns early if ambiguous)
- *   4. Image compositing (sharp overlay or DALL-E 3)
+ *   4. Mockup compositing (surface analysis → resize → shadow → blend)
  *   5. Quality control (GPT-4o vision)
- *   6. Conversational response (GPT-4o)
+ *   6. Conversational response explaining what was done
  *
- * Input convention (post-flip):
- *   baseImageB64     = the design, pattern, or artwork to apply
+ * Input convention:
+ *   baseImageB64      = the design, pattern, or artwork to apply
  *   referenceImageB64 = the target surface or object photo (optional)
  */
 
@@ -35,10 +35,10 @@ export async function runPipeline(req: EditRequest): Promise<EditResponse> {
   let interpretation;
   try {
     interpretation = await interpretRequest(
-      baseImageB64,        // design image
+      baseImageB64,
       instruction,
       surfaceHint,
-      referenceImageB64,   // surface photo
+      referenceImageB64,
       conversationHistory
     );
   } catch (err) {
@@ -48,22 +48,12 @@ export async function runPipeline(req: EditRequest): Promise<EditResponse> {
   // ── Safety gate ────────────────────────────────────────────────────────────
   if (!interpretation.isSafe) {
     const msg = await generateAssistantMessage(
-      instruction,
-      interpretation,
-      null,
-      null,
-      conversationHistory,
-      false
+      instruction, interpretation, null, null, conversationHistory, false
     );
     return {
-      sessionId,
-      interpretation,
-      editPlan: null,
-      outputImageB64: null,
-      qualityCheck: null,
-      assistantMessage: msg,
-      clarificationNeeded: false,
-      clarificationQuestion: null,
+      sessionId, interpretation, editPlan: null, outputImageB64: null,
+      qualityCheck: null, assistantMessage: msg, mockupSteps: [],
+      clarificationNeeded: false, clarificationQuestion: null,
       error: interpretation.safetyNote,
     };
   }
@@ -71,22 +61,12 @@ export async function runPipeline(req: EditRequest): Promise<EditResponse> {
   // ── Unsupported surface gate ───────────────────────────────────────────────
   if (interpretation.unsupportedReason) {
     const msg = await generateAssistantMessage(
-      instruction,
-      interpretation,
-      null,
-      null,
-      conversationHistory,
-      false
+      instruction, interpretation, null, null, conversationHistory, false
     );
     return {
-      sessionId,
-      interpretation,
-      editPlan: null,
-      outputImageB64: null,
-      qualityCheck: null,
-      assistantMessage: msg,
-      clarificationNeeded: false,
-      clarificationQuestion: null,
+      sessionId, interpretation, editPlan: null, outputImageB64: null,
+      qualityCheck: null, assistantMessage: msg, mockupSteps: [],
+      clarificationNeeded: false, clarificationQuestion: null,
       error: interpretation.unsupportedReason,
     };
   }
@@ -94,20 +74,11 @@ export async function runPipeline(req: EditRequest): Promise<EditResponse> {
   // ── Step 3: Clarification gate ─────────────────────────────────────────────
   if (interpretation.isAmbiguous && interpretation.clarificationQuestion) {
     const msg = await generateAssistantMessage(
-      instruction,
-      interpretation,
-      null,
-      null,
-      conversationHistory,
-      true
+      instruction, interpretation, null, null, conversationHistory, true
     );
     return {
-      sessionId,
-      interpretation,
-      editPlan: null,
-      outputImageB64: null,
-      qualityCheck: null,
-      assistantMessage: msg,
+      sessionId, interpretation, editPlan: null, outputImageB64: null,
+      qualityCheck: null, assistantMessage: msg, mockupSteps: [],
       clarificationNeeded: true,
       clarificationQuestion: interpretation.clarificationQuestion,
       error: null,
@@ -118,44 +89,33 @@ export async function runPipeline(req: EditRequest): Promise<EditResponse> {
   let plan;
   try {
     plan = await generateEditPlan(
-      interpretation,
-      instruction,
-      surfaceHint,
-      baseImageB64,        // pass the design image for plan context
-      conversationHistory
+      interpretation, instruction, surfaceHint, baseImageB64, conversationHistory
     );
   } catch (err) {
     return errorResponse(sessionId, `Edit plan generation failed: ${String(err)}`);
   }
 
-  // ── Step 4: Execute edit ───────────────────────────────────────────────────
+  // ── Step 4: Execute mockup compositing ────────────────────────────────────
   let outputImageB64: string | null = null;
+  let mockupSteps: string[] = [];
   try {
-    outputImageB64 = await executeEdit(
-      baseImageB64,        // design image
+    const result = await executeEdit(
+      baseImageB64,
       plan,
       instruction,
-      referenceImageB64    // surface photo
+      referenceImageB64
     );
+    outputImageB64 = result.imageB64;
+    mockupSteps = result.steps;
   } catch (err) {
     console.error("[pipeline] Edit execution failed:", err);
     const msg = await generateAssistantMessage(
-      instruction,
-      interpretation,
-      plan,
-      null,
-      conversationHistory,
-      false
+      instruction, interpretation, plan, null, conversationHistory, false, []
     );
     return {
-      sessionId,
-      interpretation,
-      editPlan: plan,
-      outputImageB64: null,
-      qualityCheck: null,
-      assistantMessage: msg,
-      clarificationNeeded: false,
-      clarificationQuestion: null,
+      sessionId, interpretation, editPlan: plan, outputImageB64: null,
+      qualityCheck: null, assistantMessage: msg, mockupSteps: [],
+      clarificationNeeded: false, clarificationQuestion: null,
       error: `Image generation failed: ${String(err)}`,
     };
   }
@@ -170,14 +130,10 @@ export async function runPipeline(req: EditRequest): Promise<EditResponse> {
     }
   }
 
-  // ── Step 6: Generate conversational response ───────────────────────────────
+  // ── Step 6: Conversational response explaining the mockup ─────────────────
   const assistantMessage = await generateAssistantMessage(
-    instruction,
-    interpretation,
-    plan,
-    qualityCheck,
-    conversationHistory,
-    false
+    instruction, interpretation, plan, qualityCheck,
+    conversationHistory, false, mockupSteps
   );
 
   return {
@@ -187,6 +143,7 @@ export async function runPipeline(req: EditRequest): Promise<EditResponse> {
     outputImageB64,
     qualityCheck,
     assistantMessage,
+    mockupSteps,
     clarificationNeeded: false,
     clarificationQuestion: null,
     error: null,
@@ -210,6 +167,7 @@ function errorResponse(sessionId: string, error: string): EditResponse {
     outputImageB64: null,
     qualityCheck: null,
     assistantMessage: "Something went wrong. Please try again.",
+    mockupSteps: [],
     clarificationNeeded: false,
     clarificationQuestion: null,
     error,

@@ -118,33 +118,62 @@ Rules:
 }
 
 // ─── Build mask PNG ───────────────────────────────────────────────────────────
-// Transparent (alpha=0) over the target area → model fills this region.
-// Opaque black (alpha=255) everywhere else → model leaves this unchanged.
+// Transparent (alpha=0) over the design placement area → model fills here.
+// Opaque black (alpha=255) everywhere else → model leaves pixel-perfect.
+//
+// Key insight: we do NOT mask the entire surface bounding box. We mask only
+// a centred sub-region sized to fit the design. This preserves wall edges,
+// clocks, artwork, and other objects that sit on the surface but outside
+// the design placement zone.
+
+function designPlacementBox(surfaceBox: BoundingBox, targetSurface: string): BoundingBox {
+  // Design occupies a centred portion of the surface area.
+  // Smaller = more of the original surface preserved.
+  const scaleFactors: Record<string, { sw: number; sh: number }> = {
+    wall:          { sw: 0.55, sh: 0.55 }, // centred on wall, well away from edges/clock
+    shirt:         { sw: 0.70, sh: 0.70 },
+    mug:           { sw: 0.80, sh: 0.80 },
+    notebook:      { sw: 0.85, sh: 0.85 },
+    poster:        { sw: 0.90, sh: 0.90 },
+    cardboard_box: { sw: 0.85, sh: 0.85 },
+    field_grass:   { sw: 0.70, sh: 0.60 },
+  };
+
+  const { sw, sh } = scaleFactors[targetSurface] ?? { sw: 0.60, sh: 0.60 };
+
+  const dw = surfaceBox.w * sw;
+  const dh = surfaceBox.h * sh;
+  // Centre within the surface box
+  const dx = surfaceBox.x + (surfaceBox.w - dw) / 2;
+  const dy = surfaceBox.y + (surfaceBox.h - dh) / 2;
+
+  return { x: dx, y: dy, w: dw, h: dh };
+}
 
 async function buildMask(
   width: number,
   height: number,
   box: BoundingBox
 ): Promise<Buffer> {
-  const px = Math.round(box.x * width);
-  const py = Math.round(box.y * height);
+  const px = Math.max(0, Math.round(box.x * width));
+  const py = Math.max(0, Math.round(box.y * height));
   const pw = Math.min(Math.round(box.w * width),  width  - px);
   const ph = Math.min(Math.round(box.h * height), height - py);
 
-  // Start with fully opaque black canvas
+  // Start with fully opaque black canvas (preserve everything)
   const canvas = Buffer.alloc(width * height * 4);
   for (let i = 0; i < width * height; i++) {
-    canvas[i * 4 + 0] = 0;   // R
-    canvas[i * 4 + 1] = 0;   // G
-    canvas[i * 4 + 2] = 0;   // B
-    canvas[i * 4 + 3] = 255; // A — opaque (preserve)
+    canvas[i * 4 + 0] = 0;
+    canvas[i * 4 + 1] = 0;
+    canvas[i * 4 + 2] = 0;
+    canvas[i * 4 + 3] = 255; // opaque = preserve
   }
 
-  // Punch out the target area — make it transparent (model will fill here)
+  // Punch out only the design placement area
   for (let row = py; row < py + ph; row++) {
     for (let col = px; col < px + pw; col++) {
       const idx = (row * width + col) * 4;
-      canvas[idx + 3] = 0; // alpha=0 → transparent → model edits here
+      canvas[idx + 3] = 0; // transparent = model edits here
     }
   }
 
@@ -157,64 +186,67 @@ async function buildMask(
 
 async function gptImageEdit(
   surfaceB64: string,
+  designB64: string,
   maskBuffer: Buffer,
   plan: EditPlan,
-  instruction: string,
   steps: string[]
 ): Promise<string> {
-  const client = getOpenAIClient();
+  // Convert images to PNG buffers (gpt-image-1 edit requires PNG)
+  const surfaceBuffer = Buffer.from(surfaceB64.replace(/^data:image\/\w+;base64,/, ""), "base64");
+  const designBuffer  = Buffer.from(designB64.replace(/^data:image\/\w+;base64,/, ""), "base64");
 
-  // Convert surface base64 to a PNG buffer for the API
-  const surfaceBuffer = Buffer.from(
-    surfaceB64.replace(/^data:image\/\w+;base64,/, ""), "base64"
-  );
-
-  // Ensure surface is PNG (gpt-image-1 edit requires PNG)
   const surfacePng = await sharp(surfaceBuffer).png().toBuffer();
+  const designPng  = await sharp(designBuffer).resize(512, 512, { fit: "inside" }).png().toBuffer();
 
   const surfaceLabels: Record<string, string> = {
-    wall:          "the wall surface (not on the TV, windows, or furniture)",
-    shirt:         "the front of the shirt (chest/torso area only)",
-    mug:           "the body of the mug (wrapping around the cylinder)",
-    notebook:      "the front cover of the notebook",
-    poster:        "inside the poster frame",
-    cardboard_box: "the front face of the cardboard box",
-    field_grass:   "the grass area of the field",
+    wall:          "the wall (in the transparent masked area only)",
+    shirt:         "the shirt chest area (in the transparent masked area only)",
+    mug:           "the mug body (in the transparent masked area only)",
+    notebook:      "the notebook cover (in the transparent masked area only)",
+    poster:        "inside the poster frame (in the transparent masked area only)",
+    cardboard_box: "the box face (in the transparent masked area only)",
+    field_grass:   "the grass (in the transparent masked area only)",
   };
-  const surfaceLabel = surfaceLabels[plan.targetSurface] ?? plan.targetSurface;
+  const surfaceLabel = surfaceLabels[plan.targetSurface] ?? `the ${plan.targetSurface} (in the transparent masked area only)`;
 
   const prompt = [
-    `Apply this design to ${surfaceLabel}: ${instruction}.`,
-    `The design should look like it is physically printed, painted, or applied to the surface.`,
-    `Match the surface's existing lighting, shadows, perspective, and texture.`,
-    `Keep everything outside the target area exactly as it is in the original photo.`,
+    `Place the design from the second image onto ${surfaceLabel}.`,
+    `Use the exact design from the second image — do not invent, replace, or alter it.`,
+    `The design should appear physically applied to the surface: adapt its lighting, shadows, and perspective to match the surface.`,
+    `The wall color, wall texture, and all existing objects (furniture, clock, TV, artwork, decorations) must remain completely unchanged.`,
+    `Only fill the transparent masked region. Every opaque pixel outside the mask must be pixel-perfect identical to the original photo.`,
     `Photorealistic, high quality mockup.`,
   ].join(" ");
 
-  steps.push(`Sending surface photo to gpt-image-1 with a mask covering only the ${plan.targetSurface} area.`);
-  steps.push(`Edit prompt: "${prompt.slice(0, 100)}…"`);
+  steps.push(`Sending surface photo + design to gpt-image-1. Only the masked placement area will be edited.`);
+  steps.push(`Wall color, texture, clock, TV, and all other objects outside the mask are preserved exactly.`);
 
-  // Convert buffers to File objects for the API
-  const { toFile } = await import("openai");
+  const apiKey = process.env.OPENAI_API_KEY!;
+  const formData = new FormData();
+  formData.append("model", "gpt-image-1");
+  formData.append("prompt", prompt);
+  formData.append("n", "1");
+  formData.append("size", "1024x1024");
+  formData.append("image[]", new Blob([new Uint8Array(surfacePng)], { type: "image/png" }), "surface.png");
+  formData.append("image[]", new Blob([new Uint8Array(designPng)],  { type: "image/png" }), "design.png");
+  formData.append("mask",    new Blob([new Uint8Array(maskBuffer)], { type: "image/png" }), "mask.png");
 
-  const imageFile = await toFile(surfacePng, "surface.png", { type: "image/png" });
-  const maskFile  = await toFile(maskBuffer,  "mask.png",    { type: "image/png" });
-
-  const response = await client.images.edit({
-    model: "gpt-image-1-mini",
-    image: imageFile,
-    mask: maskFile,
-    prompt,
-    n: 1,
-    size: "1024x1024",
+  const fetchResponse = await fetch("https://api.openai.com/v1/images/edits", {
+    method: "POST",
+    headers: { Authorization: `Bearer ${apiKey}` },
+    body: formData,
   });
 
-  const b64 = response.data[0]?.b64_json;
+  if (!fetchResponse.ok) {
+    const errText = await fetchResponse.text();
+    throw new Error(`gpt-image-1 edit API error ${fetchResponse.status}: ${errText.slice(0, 200)}`);
+  }
+
+  const json = await fetchResponse.json() as { data: Array<{ b64_json?: string }> };
+  const b64 = json.data[0]?.b64_json;
   if (!b64) throw new Error("No image returned from gpt-image-1 edit.");
 
-  steps.push(`gpt-image-1 applied the design to the ${plan.targetSurface} area with correct lighting and perspective.`);
-  steps.push("All other elements in the photo (TV, furniture, background) are preserved exactly.");
-
+  steps.push(`Design placed on the ${plan.targetSurface} with matching lighting and perspective.`);
   return `data:image/png;base64,${b64}`;
 }
 
@@ -297,17 +329,21 @@ export async function executeEdit(
     .toBuffer();
   const resizedSurfaceB64 = `data:image/png;base64,${resizedSurface.toString("base64")}`;
 
-  // ── Step C: Build mask ────────────────────────────────────────────────────
-  steps.push(`Building edit mask: transparent over the ${plan.targetSurface} area, opaque everywhere else.`);
-  const maskBuffer = await buildMask(1024, 1024, box);
+  // ── Step C: Build mask (centred sub-region, not the full surface box) ───────
+  const placementBox = designPlacementBox(box, plan.targetSurface);
+  steps.push(
+    `Design placement area: centred ${Math.round(placementBox.w * 100)}% × ${Math.round(placementBox.h * 100)}% of the image. ` +
+    `Wall edges, clock, and other objects outside this area are fully preserved.`
+  );
+  const maskBuffer = await buildMask(1024, 1024, placementBox);
 
   // ── Step D: gpt-image-1 edit ──────────────────────────────────────────────
   try {
     const imageB64 = await gptImageEdit(
       resizedSurfaceB64,
+      designImageB64,
       maskBuffer,
       plan,
-      instruction,
       steps
     );
     return { imageB64, steps };

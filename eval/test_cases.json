@@ -77,7 +77,7 @@
     "base_image": "eval/assets/cardboard_box_plain.jpg",
     "reference_image": "eval/assets/brand_label.png",
     "instruction": "Put this label design on the front face of the box only.",
-    "expected_surface": "cardboard box",
+    "expected_surface": "cardboard_box",
     "expected_behavior": "Label applied to front panel only.",
     "pass_criteria": "Correct front-face targeting."
   },
@@ -86,7 +86,7 @@
     "base_image": "eval/assets/grass_field.jpg",
     "reference_image": "eval/assets/soccer_logo.png",
     "instruction": "Place this logo on the center of the field without changing the sky or stands.",
-    "expected_surface": "field",
+    "expected_surface": "field_grass",
     "expected_behavior": "Logo appears on grass region only.",
     "pass_criteria": "Grass edited only; non-field regions preserved."
   }

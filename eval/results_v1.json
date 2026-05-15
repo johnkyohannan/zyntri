@@ -1,23 +1,441 @@
 {
   "version": "v1",
-  "timestamp": "2025-01-01T00:00:00.000Z",
+  "timestamp": "2026-05-15T23:11:50.705Z",
   "totalCases": 10,
-  "passed": 0,
-  "failed": 10,
-  "accuracy": 0.0,
-  "avgScore": 0.0,
-  "avgDurationMs": 0,
-  "note": "Placeholder — run `npm run eval` with VERSION=v1 to populate with real results.",
+  "passed": 3,
+  "failed": 7,
+  "accuracy": 0.3,
+  "avgScore": 0.43,
+  "avgDurationMs": 31727,
   "results": [
-    { "id": "tc_001", "passed": false, "score": 0, "interpretation": null, "editPlan": null, "qualityCheck": null, "assistantMessage": "", "failureReason": "not_yet_run", "durationMs": 0 },
-    { "id": "tc_002", "passed": false, "score": 0, "interpretation": null, "editPlan": null, "qualityCheck": null, "assistantMessage": "", "failureReason": "not_yet_run", "durationMs": 0 },
-    { "id": "tc_003", "passed": false, "score": 0, "interpretation": null, "editPlan": null, "qualityCheck": null, "assistantMessage": "", "failureReason": "not_yet_run", "durationMs": 0 },
-    { "id": "tc_004", "passed": false, "score": 0, "interpretation": null, "editPlan": null, "qualityCheck": null, "assistantMessage": "", "failureReason": "not_yet_run", "durationMs": 0 },
-    { "id": "tc_005", "passed": false, "score": 0, "interpretation": null, "editPlan": null, "qualityCheck": null, "assistantMessage": "", "failureReason": "not_yet_run", "durationMs": 0 },
-    { "id": "tc_006", "passed": false, "score": 0, "interpretation": null, "editPlan": null, "qualityCheck": null, "assistantMessage": "", "failureReason": "not_yet_run", "durationMs": 0 },
-    { "id": "tc_007", "passed": false, "score": 0, "interpretation": null, "editPlan": null, "qualityCheck": null, "assistantMessage": "", "failureReason": "not_yet_run", "durationMs": 0 },
-    { "id": "tc_008", "passed": false, "score": 0, "interpretation": null, "editPlan": null, "qualityCheck": null, "assistantMessage": "", "failureReason": "not_yet_run", "durationMs": 0 },
-    { "id": "tc_009", "passed": false, "score": 0, "interpretation": null, "editPlan": null, "qualityCheck": null, "assistantMessage": "", "failureReason": "not_yet_run", "durationMs": 0 },
-    { "id": "tc_010", "passed": false, "score": 0, "interpretation": null, "editPlan": null, "qualityCheck": null, "assistantMessage": "", "failureReason": "not_yet_run", "durationMs": 0 }
+    {
+      "id": "tc01",
+      "passed": false,
+      "score": 0,
+      "interpretation": {
+        "detectedSurfaces": [
+          "shirt"
+        ],
+        "primarySurface": "shirt",
+        "isAmbiguous": false,
+        "clarificationQuestion": null,
+        "confidence": 1,
+        "unsupportedReason": null,
+        "isSafe": true,
+        "safetyNote": null
+      },
+      "editPlan": {
+        "targetSurface": "shirt",
+        "editType": "pattern_apply",
+        "blendMode": "normal",
+        "opacity": 1,
+        "preserveShading": false,
+        "perspectiveAware": true,
+        "colorAdjustment": null,
+        "additionalNotes": "Apply floral pattern only to the front of the shirt.",
+        "estimatedDifficulty": "easy",
+        "warningFlags": []
+      },
+      "qualityCheck": {
+        "passed": false,
+        "score": 0,
+        "issues": [
+          "Floral pattern was not applied to the shirt as instructed."
+        ],
+        "suggestions": [
+          "Ensure the floral pattern is correctly applied to the front of the shirt."
+        ],
+        "summary": "The floral pattern edit was not executed, resulting in a failed application."
+      },
+      "assistantMessage": "I've confirmed that you wanted the floral pattern applied to the front of the shirt, and I attempted to execute this. I carefully prepared the shirt image, ensuring the design would be centered and matched to the shirt's lighting and perspective to ensure a realistic look. However, it seems that the floral pattern was not successfully applied, resulting in a quality issue. I suggest retrying the application of the floral pattern to ensure it appears correctly on the shirt.",
+      "failureReason": "quality_too_low(0%)",
+      "durationMs": 32756
+    },
+    {
+      "id": "tc02",
+      "passed": true,
+      "score": 0.9,
+      "interpretation": {
+        "detectedSurfaces": [
+          "shirt"
+        ],
+        "primarySurface": "shirt",
+        "isAmbiguous": false,
+        "clarificationQuestion": null,
+        "confidence": 1,
+        "unsupportedReason": null,
+        "isSafe": true,
+        "safetyNote": null
+      },
+      "editPlan": {
+        "targetSurface": "shirt",
+        "editType": "artwork_transfer",
+        "blendMode": "normal",
+        "opacity": 1,
+        "preserveShading": false,
+        "perspectiveAware": false,
+        "colorAdjustment": null,
+        "additionalNotes": "Place logo in the center of the shirt.",
+        "estimatedDifficulty": "easy",
+        "warningFlags": []
+      },
+      "qualityCheck": {
+        "passed": true,
+        "score": 0.9,
+        "issues": [],
+        "suggestions": [],
+        "summary": "The logo is correctly centered on the shirt with no visible issues."
+      },
+      "assistantMessage": "I’ve centered your logo on the shirt as you requested, ensuring everything else remains unchanged. To achieve a realistic look, I resized the surface photo and placed the design in a way that matches the shirt’s lighting and perspective, which helps it blend seamlessly with the fabric. The quality is quite high, with a score of 90%, so there are no visible issues. If you'd like, we could explore trying different placements or colors for the logo to see how it enhances the overall design!",
+      "failureReason": null,
+      "durationMs": 33120
+    },
+    {
+      "id": "tc03",
+      "passed": false,
+      "score": 0.4,
+      "interpretation": {
+        "detectedSurfaces": [
+          "wall"
+        ],
+        "primarySurface": "poster",
+        "isAmbiguous": false,
+        "clarificationQuestion": null,
+        "confidence": 0.9,
+        "unsupportedReason": null,
+        "isSafe": true,
+        "safetyNote": null
+      },
+      "editPlan": {
+        "targetSurface": "poster",
+        "editType": "artwork_transfer",
+        "blendMode": "normal",
+        "opacity": 1,
+        "preserveShading": false,
+        "perspectiveAware": true,
+        "colorAdjustment": null,
+        "additionalNotes": "Place artwork flat on the wall above the desk.",
+        "estimatedDifficulty": "easy",
+        "warningFlags": []
+      },
+      "qualityCheck": {
+        "passed": false,
+        "score": 0.4,
+        "issues": [
+          "Artwork not visible on the wall",
+          "No evidence of poster placement",
+          "Incorrect surface targeted"
+        ],
+        "suggestions": [
+          "Ensure the artwork is clearly placed on the wall",
+          "Adjust the size and position of the artwork to fit the frame",
+          "Check for proper blending with the wall texture"
+        ],
+        "summary": "The edit failed as the artwork is not visible on the wall."
+      },
+      "assistantMessage": "I understand you wanted to place your artwork as a flat poster on the blank wall above the desk. However, it seems that the artwork isn't visible on the wall, indicating that the placement didn't effectively showcase your design. I attempted to center the artwork while preserving the wall's color and texture, but it didn’t blend well with the surface, resulting in a quality score of just 40%. To refine this, I recommend adjusting the size and position of the artwork to ensure it fits the space more naturally and enhances visibility on the wall.",
+      "failureReason": "surface_mismatch(got=poster,expected=wall); quality_too_low(40%)",
+      "durationMs": 27605
+    },
+    {
+      "id": "tc04",
+      "passed": false,
+      "score": 0.4,
+      "interpretation": {
+        "detectedSurfaces": [
+          "wall"
+        ],
+        "primarySurface": "wall",
+        "isAmbiguous": false,
+        "clarificationQuestion": null,
+        "confidence": 1,
+        "unsupportedReason": null,
+        "isSafe": true,
+        "safetyNote": null
+      },
+      "editPlan": {
+        "targetSurface": "wall",
+        "editType": "texture_overlay",
+        "blendMode": "multiply",
+        "opacity": 0.8,
+        "preserveShading": true,
+        "perspectiveAware": true,
+        "colorAdjustment": null,
+        "additionalNotes": "Ensure the couch remains unchanged.",
+        "estimatedDifficulty": "medium",
+        "warningFlags": []
+      },
+      "qualityCheck": {
+        "passed": false,
+        "score": 0.4,
+        "issues": [
+          "Edit applied to the wrong surface; wall does not appear to have an exposed brick texture.",
+          "Major artifacts present; the texture does not blend well with the existing wall color."
+        ],
+        "suggestions": [
+          "Reapply the texture overlay specifically to the wall area, ensuring it resembles exposed brick.",
+          "Adjust the blend mode and opacity to better integrate the texture with the wall."
+        ],
+        "summary": "The edit failed as the wall does not reflect the intended exposed brick texture."
+      },
+      "assistantMessage": "I've applied a texture overlay to the main wall, aiming to achieve an exposed brick look while keeping the couch unchanged. However, it seems the edit did not turn out as expected; the wall lacks the intended texture and there are noticeable artifacts, making it not blend well with the existing color. To refine the mockup, I suggest reapplying the texture overlay specifically to the wall area, adjusting the blend mode and opacity to better integrate the brick texture with the wall for a more realistic appearance.",
+      "failureReason": "quality_too_low(40%)",
+      "durationMs": 37101
+    },
+    {
+      "id": "tc05",
+      "passed": false,
+      "score": 0.4,
+      "interpretation": {
+        "detectedSurfaces": [
+          "mug"
+        ],
+        "primarySurface": "mug",
+        "isAmbiguous": false,
+        "clarificationQuestion": null,
+        "confidence": 1,
+        "unsupportedReason": null,
+        "isSafe": true,
+        "safetyNote": null
+      },
+      "editPlan": {
+        "targetSurface": "mug",
+        "editType": "artwork_transfer",
+        "blendMode": "normal",
+        "opacity": 1,
+        "preserveShading": true,
+        "perspectiveAware": true,
+        "colorAdjustment": null,
+        "additionalNotes": "Wrap the floral artwork around the mug while keeping the table unchanged.",
+        "estimatedDifficulty": "medium",
+        "warningFlags": []
+      },
+      "qualityCheck": {
+        "passed": false,
+        "score": 0.4,
+        "issues": [
+          "Artwork not applied to the mug",
+          "Mug remains blank",
+          "No visible transfer of floral artwork"
+        ],
+        "suggestions": [
+          "Ensure the floral artwork is correctly wrapped around the mug",
+          "Adjust the positioning of the artwork for a seamless look"
+        ],
+        "summary": "The edit failed as the floral artwork was not applied to the mug."
+      },
+      "assistantMessage": "I see that you wanted the floral artwork to wrap around the mug while keeping the table unchanged. However, it seems the artwork wasn't successfully applied to the mug, leaving it blank. To create a realistic mockup, I prepared the mug's surface and ensured that the design would match the lighting and perspective. Unfortunately, there was an issue with the transfer, which resulted in no visible artwork on the mug. I suggest trying to adjust the positioning of the floral artwork to ensure it wraps seamlessly around the mug for a more polished look.",
+      "failureReason": "quality_too_low(40%)",
+      "durationMs": 29538
+    },
+    {
+      "id": "tc06",
+      "passed": false,
+      "score": 0.4,
+      "interpretation": {
+        "detectedSurfaces": [
+          "notebook"
+        ],
+        "primarySurface": "notebook",
+        "isAmbiguous": false,
+        "clarificationQuestion": null,
+        "confidence": 1,
+        "unsupportedReason": null,
+        "isSafe": true,
+        "safetyNote": null
+      },
+      "editPlan": {
+        "targetSurface": "notebook",
+        "editType": "artwork_transfer",
+        "blendMode": "normal",
+        "opacity": 1,
+        "preserveShading": false,
+        "perspectiveAware": true,
+        "colorAdjustment": null,
+        "additionalNotes": "Apply sticker design to the notebook cover.",
+        "estimatedDifficulty": "easy",
+        "warningFlags": []
+      },
+      "qualityCheck": {
+        "passed": false,
+        "score": 0.4,
+        "issues": [
+          "Sticker design not visible on the notebook cover.",
+          "No evidence of artwork transfer applied."
+        ],
+        "suggestions": [
+          "Ensure the sticker design is clearly applied to the notebook cover.",
+          "Check alignment and visibility of the artwork."
+        ],
+        "summary": "The edit failed as the sticker design is not visible on the notebook cover."
+      },
+      "assistantMessage": "I’ve added your sticker design to the notebook cover as you requested. To create a realistic mockup, I centered the design on the cover while maintaining the notebook's original texture and lighting. However, it seems the sticker design didn’t appear clearly, which might be due to visibility or alignment issues. I suggest checking the design’s opacity or adjusting its position to ensure it stands out on the cover. Let me know if you'd like to make those adjustments!",
+      "failureReason": "quality_too_low(40%)",
+      "durationMs": 30471
+    },
+    {
+      "id": "tc07",
+      "passed": true,
+      "score": 0.9,
+      "interpretation": {
+        "detectedSurfaces": [
+          "notebook"
+        ],
+        "primarySurface": "notebook",
+        "isAmbiguous": false,
+        "clarificationQuestion": null,
+        "confidence": 1,
+        "unsupportedReason": null,
+        "isSafe": true,
+        "safetyNote": null
+      },
+      "editPlan": {
+        "targetSurface": "notebook",
+        "editType": "color_restyle",
+        "blendMode": "normal",
+        "opacity": 1,
+        "preserveShading": false,
+        "perspectiveAware": true,
+        "colorAdjustment": null,
+        "additionalNotes": "Apply the provided color style to the notebook cover while keeping the desk unchanged.",
+        "estimatedDifficulty": "easy",
+        "warningFlags": []
+      },
+      "qualityCheck": {
+        "passed": true,
+        "score": 0.9,
+        "issues": [],
+        "suggestions": [],
+        "summary": "The edit is clearly visible and correctly applied to the notebook cover with no major artifacts."
+      },
+      "assistantMessage": "I've transformed the notebook cover into your desired style while keeping the desk unchanged. To achieve this, I carefully detected the notebook area and applied the design in a way that maintains the original lighting and perspective, ensuring it looks realistic on the surface. The edit is clean, with no major artifacts, although there is a slight variation in texture that could be improved. As a refinement, you might consider adjusting the color balance further for a more cohesive look with the desk's aesthetic.",
+      "failureReason": null,
+      "durationMs": 29730
+    },
+    {
+      "id": "tc08",
+      "passed": true,
+      "score": 0.9,
+      "interpretation": {
+        "detectedSurfaces": [
+          "poster"
+        ],
+        "primarySurface": "poster",
+        "isAmbiguous": false,
+        "clarificationQuestion": null,
+        "confidence": 1,
+        "unsupportedReason": null,
+        "isSafe": true,
+        "safetyNote": null
+      },
+      "editPlan": {
+        "targetSurface": "poster",
+        "editType": "artwork_transfer",
+        "blendMode": "normal",
+        "opacity": 1,
+        "preserveShading": false,
+        "perspectiveAware": true,
+        "colorAdjustment": null,
+        "additionalNotes": "Replace the entire blank area of the poster with the provided artwork.",
+        "estimatedDifficulty": "easy",
+        "warningFlags": []
+      },
+      "qualityCheck": {
+        "passed": true,
+        "score": 0.9,
+        "issues": [],
+        "suggestions": [],
+        "summary": "The artwork transfer is clearly visible and correctly applied to the poster area."
+      },
+      "assistantMessage": "I've successfully replaced the blank poster area with your artwork, ensuring it fits perfectly on the surface. The design was scaled and centered to cover most of the poster while maintaining the original wall color and texture around it, so everything outside the artwork remains untouched. The lighting and perspective have been adjusted to match the existing environment, creating a realistic look. While the transfer is quite clear and well done, there might be slight variations in texture that you could refine further. If you’d like, we can explore adding more depth or effects to enhance the artwork's integration with the poster even more.",
+      "failureReason": null,
+      "durationMs": 29197
+    },
+    {
+      "id": "tc09",
+      "passed": false,
+      "score": 0,
+      "interpretation": {
+        "detectedSurfaces": [
+          "cardboard_box"
+        ],
+        "primarySurface": "cardboard_box",
+        "isAmbiguous": false,
+        "clarificationQuestion": null,
+        "confidence": 1,
+        "unsupportedReason": null,
+        "isSafe": true,
+        "safetyNote": null
+      },
+      "editPlan": {
+        "targetSurface": "cardboard_box",
+        "editType": "artwork_transfer",
+        "blendMode": "normal",
+        "opacity": 1,
+        "preserveShading": false,
+        "perspectiveAware": true,
+        "colorAdjustment": null,
+        "additionalNotes": "Apply the label design to the front face of the box only.",
+        "estimatedDifficulty": "easy",
+        "warningFlags": []
+      },
+      "qualityCheck": {
+        "passed": false,
+        "score": 0,
+        "issues": [
+          "Edit not applied to the target surface (cardboard box) as there is no box present in the image."
+        ],
+        "suggestions": [
+          "Ensure the target surface is present in the image before applying the edit."
+        ],
+        "summary": "The edit failed as the target surface was not present in the image."
+      },
+      "assistantMessage": "I understand you wanted the label design applied to the front face of a cardboard box. Unfortunately, it seems that the edit couldn't be applied because the cardboard box was not present in the image you provided. I prepared the mockup by resizing it and ensuring that the design would have been centered and blended with the box's texture and lighting, but since the box wasn't there, the edit couldn't be completed. I recommend checking your image to ensure the box is visible, and then we can try applying the label again!",
+      "failureReason": "quality_too_low(0%)",
+      "durationMs": 35209
+    },
+    {
+      "id": "tc10",
+      "passed": false,
+      "score": 0,
+      "interpretation": {
+        "detectedSurfaces": [
+          "field_grass"
+        ],
+        "primarySurface": "field_grass",
+        "isAmbiguous": false,
+        "clarificationQuestion": null,
+        "confidence": 1,
+        "unsupportedReason": null,
+        "isSafe": true,
+        "safetyNote": null
+      },
+      "editPlan": {
+        "targetSurface": "field_grass",
+        "editType": "artwork_transfer",
+        "blendMode": "normal",
+        "opacity": 1,
+        "preserveShading": false,
+        "perspectiveAware": true,
+        "colorAdjustment": null,
+        "additionalNotes": "Place the logo at the center of the field.",
+        "estimatedDifficulty": "easy",
+        "warningFlags": []
+      },
+      "qualityCheck": {
+        "passed": false,
+        "score": 0,
+        "issues": [
+          "Edit was applied to the wrong surface (TV screen instead of field grass)."
+        ],
+        "suggestions": [
+          "Reapply the logo to the correct target surface (field grass)."
+        ],
+        "summary": "The edit failed due to incorrect surface targeting."
+      },
+      "assistantMessage": "I've placed your logo at the center of the field as requested, ensuring that the sky and stands remain untouched. However, it appears that the edit was mistakenly applied to a TV screen instead of the field grass, resulting in a quality score of 0%. To achieve a realistic look, the design would typically be sized appropriately and blended with the lighting and texture of the surface. I recommend reapplying the logo on the correct surface, the field grass, for the best results.",
+      "failureReason": "quality_too_low(0%)",
+      "durationMs": 32543
+    }
   ]
 }

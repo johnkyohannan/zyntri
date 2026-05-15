@@ -1,13 +1,8 @@
 /**
- * ZyntriStudio – Pipeline Step 5: Quality Control / Validation
+ * ZyntriStudio – Pipeline Step 5: Quality Control
  *
- * Sends the output image back to GPT-4o with the original instruction and
- * edit plan to verify the edit was applied correctly.
- *
- * This closes the pipeline loop and provides:
- *   - A quality score shown in the UI
- *   - Actionable suggestions for refinement
- *   - A pass/fail signal used by the eval harness
+ * Sends the output image back to GPT-4o-mini with the original instruction
+ * and edit plan to verify the edit was applied correctly.
  */
 
 import OpenAI from "openai";

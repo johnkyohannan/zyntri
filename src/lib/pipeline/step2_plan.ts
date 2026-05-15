@@ -3,11 +3,6 @@
  *
  * Given the interpretation result and the user's instruction, the LLM
  * produces a structured EditPlan that guides the image-compositing step.
- *
- * This is a separate LLM call (not bundled with Step 1) so that:
- *   - The plan can incorporate clarification answers from Step 3.
- *   - The plan reasoning is auditable and shown in the UI.
- *   - It can be regenerated independently during multi-turn refinement.
  */
 
 import OpenAI from "openai";
@@ -15,7 +10,7 @@ import { getOpenAIClient } from "../openai";
 import type { EditPlan, InterpretationResult, SurfaceCategory, ChatMessage } from "../../types";
 
 const SYSTEM_PROMPT = `You are ZyntriStudio's edit planner.
-Given a surface type, a user instruction, and optional reference image context,
+Given a surface type, a user instruction, and optional design image context,
 produce a precise JSON edit plan for the compositing engine.
 
 Respond ONLY with a valid JSON object matching this exact schema:
@@ -52,7 +47,6 @@ export async function generateEditPlan(
   const client = getOpenAIClient();
 
   const targetSurface = interpretation.primarySurface ?? surfaceHint;
-
   const contentParts: OpenAI.Chat.ChatCompletionContentPart[] = [];
 
   if (designImageB64) {

@@ -2,12 +2,12 @@
  * ZyntriStudio – Pipeline Orchestrator
  *
  * Runs the full 6-step pipeline:
- *   1. Vision + text interpretation (GPT-4o multimodal)
- *   2. Edit plan generation (GPT-4o)
- *   3. Clarification gate (returns early if ambiguous)
- *   4. Mockup compositing (surface analysis → resize → shadow → blend)
- *   5. Quality control (GPT-4o vision)
- *   6. Conversational response explaining what was done
+ *   1. Vision + text interpretation (gpt-4o-mini multimodal)
+ *   2. Edit plan generation (gpt-4o-mini)
+ *   3. Clarification / safety gate (conditional branch, no LLM call)
+ *   4. Mockup compositing (gpt-4o-mini bbox → gpt-image-1 inpainting)
+ *   5. Quality control (gpt-4o-mini vision)
+ *   6. Conversational response explaining the mockup (gpt-4o-mini)
  *
  * Input convention:
  *   baseImageB64      = the design, pattern, or artwork to apply
@@ -130,7 +130,7 @@ export async function runPipeline(req: EditRequest): Promise<EditResponse> {
     }
   }
 
-  // ── Step 6: Conversational response explaining the mockup ─────────────────
+  // ── Step 6: Conversational response ───────────────────────────────────────
   const assistantMessage = await generateAssistantMessage(
     instruction, interpretation, plan, qualityCheck,
     conversationHistory, false, mockupSteps

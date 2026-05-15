@@ -11,7 +11,7 @@ export function getOpenAIClient(): OpenAI {
     const apiKey = process.env.OPENAI_API_KEY;
     if (!apiKey) {
       throw new Error(
-        "OPENAI_API_KEY is not set. Copy .env.example to .env and add your key."
+        "OPENAI_API_KEY is not set. Copy .env.example to .env.local and add your key."
       );
     }
     _client = new OpenAI({ apiKey });

@@ -2,15 +2,14 @@
  * ZyntriStudio – Pipeline Step 4: Mockup Generation
  *
  * PRIMARY PATH (surface photo provided):
- *   Uses the OpenAI images.edit endpoint with gpt-image-1.
- *   - GPT-4.1-mini analyses the surface photo and returns the bounding box
- *     of the target surface area as pixel fractions.
- *   - We build a mask PNG: transparent (alpha=0) over the target area,
- *     fully opaque (alpha=255) everywhere else.
- *   - images.edit receives the surface photo + mask + a prompt describing
- *     the design to apply. The model fills only the transparent region,
- *     leaving the rest of the photo pixel-perfect.
- *   - This means the TV, furniture, and background are never touched.
+ *   1. gpt-4o-mini detects the bounding box of the target surface area.
+ *   2. A centred sub-region mask is built (transparent = edit here,
+ *      opaque = preserve exactly). Using a sub-region rather than the full
+ *      surface box ensures wall edges, clocks, and other objects are never
+ *      touched by the model.
+ *   3. gpt-image-1 receives the surface photo + design image + mask and
+ *      fills only the transparent region with the design, matching the
+ *      surface's lighting, shadows, and perspective.
  *
  * FALLBACK (no surface photo, or edit API fails):
  *   DALL-E 3 generates a clean product mockup from scratch.
@@ -26,7 +25,7 @@ export interface CompositeResult {
   steps: string[];
 }
 
-// ─── Surface bounding box via GPT-4.1-mini ────────────────────────────────────
+// ─── Bounding box types ───────────────────────────────────────────────────────
 
 interface BoundingBox {
   x: number; // 0–1 left edge
@@ -35,8 +34,7 @@ interface BoundingBox {
   h: number; // 0–1 height
 }
 
-// Conservative per-surface fallbacks used when the model fails or returns
-// implausible values. These avoid common problem areas (TVs, faces, windows).
+// Conservative per-surface fallbacks — avoid TVs, faces, windows
 const FALLBACK_BOXES: Record<string, BoundingBox> = {
   wall:          { x: 0.10, y: 0.05, w: 0.80, h: 0.70 },
   shirt:         { x: 0.28, y: 0.22, w: 0.44, h: 0.40 },
@@ -46,6 +44,8 @@ const FALLBACK_BOXES: Record<string, BoundingBox> = {
   cardboard_box: { x: 0.08, y: 0.08, w: 0.84, h: 0.84 },
   field_grass:   { x: 0.05, y: 0.45, w: 0.90, h: 0.50 },
 };
+
+// ─── Surface bounding box detection ──────────────────────────────────────────
 
 async function getSurfaceBoundingBox(
   surfaceB64: string,
@@ -98,7 +98,6 @@ Rules:
 
   try {
     const parsed = JSON.parse(cleaned) as BoundingBox;
-    // Validate — reject implausible values
     if (
       parsed.x >= 0 && parsed.x <= 1 &&
       parsed.y >= 0 && parsed.y <= 1 &&
@@ -117,20 +116,14 @@ Rules:
   return FALLBACK_BOXES[targetSurface] ?? { x: 0.1, y: 0.1, w: 0.8, h: 0.8 };
 }
 
-// ─── Build mask PNG ───────────────────────────────────────────────────────────
-// Transparent (alpha=0) over the design placement area → model fills here.
-// Opaque black (alpha=255) everywhere else → model leaves pixel-perfect.
-//
-// Key insight: we do NOT mask the entire surface bounding box. We mask only
-// a centred sub-region sized to fit the design. This preserves wall edges,
-// clocks, artwork, and other objects that sit on the surface but outside
-// the design placement zone.
+// ─── Design placement sub-region ─────────────────────────────────────────────
+// Returns a centred sub-region of the surface box sized for the design.
+// Smaller than the full surface box so wall edges, clocks, and other objects
+// that sit on the surface but outside the design zone are never touched.
 
 function designPlacementBox(surfaceBox: BoundingBox, targetSurface: string): BoundingBox {
-  // Design occupies a centred portion of the surface area.
-  // Smaller = more of the original surface preserved.
   const scaleFactors: Record<string, { sw: number; sh: number }> = {
-    wall:          { sw: 0.55, sh: 0.55 }, // centred on wall, well away from edges/clock
+    wall:          { sw: 0.55, sh: 0.55 },
     shirt:         { sw: 0.70, sh: 0.70 },
     mug:           { sw: 0.80, sh: 0.80 },
     notebook:      { sw: 0.85, sh: 0.85 },
@@ -140,15 +133,17 @@ function designPlacementBox(surfaceBox: BoundingBox, targetSurface: string): Bou
   };
 
   const { sw, sh } = scaleFactors[targetSurface] ?? { sw: 0.60, sh: 0.60 };
-
   const dw = surfaceBox.w * sw;
   const dh = surfaceBox.h * sh;
-  // Centre within the surface box
   const dx = surfaceBox.x + (surfaceBox.w - dw) / 2;
   const dy = surfaceBox.y + (surfaceBox.h - dh) / 2;
 
   return { x: dx, y: dy, w: dw, h: dh };
 }
+
+// ─── Mask builder ─────────────────────────────────────────────────────────────
+// Transparent (alpha=0) over placement area → model fills here.
+// Opaque black (alpha=255) everywhere else → pixel-perfect preservation.
 
 async function buildMask(
   width: number,
@@ -160,7 +155,6 @@ async function buildMask(
   const pw = Math.min(Math.round(box.w * width),  width  - px);
   const ph = Math.min(Math.round(box.h * height), height - py);
 
-  // Start with fully opaque black canvas (preserve everything)
   const canvas = Buffer.alloc(width * height * 4);
   for (let i = 0; i < width * height; i++) {
     canvas[i * 4 + 0] = 0;
@@ -169,7 +163,6 @@ async function buildMask(
     canvas[i * 4 + 3] = 255; // opaque = preserve
   }
 
-  // Punch out only the design placement area
   for (let row = py; row < py + ph; row++) {
     for (let col = px; col < px + pw; col++) {
       const idx = (row * width + col) * 4;
@@ -182,7 +175,7 @@ async function buildMask(
     .toBuffer();
 }
 
-// ─── gpt-image-1 edit ─────────────────────────────────────────────────────────
+// ─── gpt-image-1 inpainting edit ─────────────────────────────────────────────
 
 async function gptImageEdit(
   surfaceB64: string,
@@ -191,7 +184,6 @@ async function gptImageEdit(
   plan: EditPlan,
   steps: string[]
 ): Promise<string> {
-  // Convert images to PNG buffers (gpt-image-1 edit requires PNG)
   const surfaceBuffer = Buffer.from(surfaceB64.replace(/^data:image\/\w+;base64,/, ""), "base64");
   const designBuffer  = Buffer.from(designB64.replace(/^data:image\/\w+;base64,/, ""), "base64");
 
@@ -219,7 +211,7 @@ async function gptImageEdit(
   ].join(" ");
 
   steps.push(`Sending surface photo + design to gpt-image-1. Only the masked placement area will be edited.`);
-  steps.push(`Wall color, texture, clock, TV, and all other objects outside the mask are preserved exactly.`);
+  steps.push(`Wall color, texture, and all objects outside the mask are preserved exactly.`);
 
   const apiKey = process.env.OPENAI_API_KEY!;
   const formData = new FormData();
@@ -310,16 +302,16 @@ export async function executeEdit(
     return { imageB64, steps };
   }
 
-  // ── Step A: Get bounding box of the target surface area ───────────────────
+  // Step A: detect surface bounding box
   steps.push(`Detecting the ${plan.targetSurface} area in the surface photo.`);
   const box = await getSurfaceBoundingBox(surfaceImageB64, plan.targetSurface);
   steps.push(
-    `Target area: left ${Math.round(box.x * 100)}%, top ${Math.round(box.y * 100)}%, ` +
+    `Surface area: left ${Math.round(box.x * 100)}%, top ${Math.round(box.y * 100)}%, ` +
     `${Math.round(box.w * 100)}% wide × ${Math.round(box.h * 100)}% tall.`
   );
 
-  // ── Step B: Resize surface to 1024×1024 (required by gpt-image-1 edit) ───
-  steps.push("Preparing surface photo for editing (resizing to 1024×1024).");
+  // Step B: resize surface to 1024×1024 (required by gpt-image-1)
+  steps.push("Preparing surface photo (resizing to 1024×1024).");
   const surfaceBuffer = Buffer.from(
     surfaceImageB64.replace(/^data:image\/\w+;base64,/, ""), "base64"
   );
@@ -329,15 +321,15 @@ export async function executeEdit(
     .toBuffer();
   const resizedSurfaceB64 = `data:image/png;base64,${resizedSurface.toString("base64")}`;
 
-  // ── Step C: Build mask (centred sub-region, not the full surface box) ───────
+  // Step C: build centred sub-region mask
   const placementBox = designPlacementBox(box, plan.targetSurface);
   steps.push(
-    `Design placement area: centred ${Math.round(placementBox.w * 100)}% × ${Math.round(placementBox.h * 100)}% of the image. ` +
-    `Wall edges, clock, and other objects outside this area are fully preserved.`
+    `Design placement: centred ${Math.round(placementBox.w * 100)}% × ${Math.round(placementBox.h * 100)}% of the image. ` +
+    `Everything outside this area is preserved exactly.`
   );
   const maskBuffer = await buildMask(1024, 1024, placementBox);
 
-  // ── Step D: gpt-image-1 edit ──────────────────────────────────────────────
+  // Step D: gpt-image-1 inpainting
   try {
     const imageB64 = await gptImageEdit(
       resizedSurfaceB64,
@@ -349,7 +341,7 @@ export async function executeEdit(
     return { imageB64, steps };
   } catch (err) {
     console.warn("[step4] gpt-image-1 edit failed, falling back to DALL-E 3:", err);
-    steps.push(`Image edit failed (${String(err).slice(0, 80)}) — falling back to DALL-E 3 generation.`);
+    steps.push(`Image edit failed — falling back to DALL-E 3 generation.`);
     const imageB64 = await dalleGenerate(plan, instruction, steps);
     return { imageB64, steps };
   }

@@ -35,8 +35,9 @@ import * as fs from "fs";
 import * as path from "path";
 import * as dotenv from "dotenv";
 
-// Load .env from project root
-dotenv.config({ path: path.resolve(__dirname, "../.env") });
+// Load .env.local or .env from project root
+dotenv.config({ path: path.resolve(__dirname, "../.env.local") });
+dotenv.config({ path: path.resolve(__dirname, "../.env") }); // fallback
 
 // Import pipeline (CommonJS-compatible via tsconfig.eval.json)
 import { runPipeline } from "../src/lib/pipeline";

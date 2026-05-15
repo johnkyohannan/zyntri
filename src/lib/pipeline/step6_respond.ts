@@ -1,12 +1,8 @@
 /**
  * ZyntriStudio – Pipeline Step 6: Conversational Response Generation
  *
- * Generates a natural-language assistant message summarising what was done,
- * what issues were found, and what the user can try next.
- *
- * This step makes the app feel like a real conversational assistant rather
- * than a one-shot API wrapper.  It uses the full pipeline context to craft
- * a contextually appropriate reply.
+ * Generates a natural-language assistant message explaining what was done
+ * to make the mockup look realistic, using the mockupSteps list as context.
  */
 
 import { getOpenAIClient } from "../openai";

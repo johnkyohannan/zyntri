@@ -271,9 +271,14 @@ async function dalleGenerate(
     field_grass:   "an open grass field, daylight",
   };
 
+  // Instruction is already sanitized upstream; we still keep it bounded here
+  // by only using the first 200 chars in the generation prompt to limit
+  // any residual injection surface in the DALL-E 3 fallback path.
+  const safeInstruction = instruction.slice(0, 200);
+
   const prompt = [
     `A photorealistic product mockup of ${surfaceDescriptions[plan.targetSurface] ?? plan.targetSurface}.`,
-    `Design applied: ${instruction}.`,
+    `The design applied to the surface: ${safeInstruction}.`,
     `The design fits the surface proportionally with realistic shadows, perspective, and depth.`,
     `High quality, professional product photography style.`,
   ].join(" ");

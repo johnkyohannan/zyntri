@@ -5,6 +5,7 @@
   display: flex;
   height: 100vh;
   overflow: hidden;
+  transition: background 0.2s ease;
 }
 
 /* ── Sidebar ── */
@@ -17,16 +18,16 @@
   display: flex;
   flex-direction: column;
   overflow-y: auto;
+  box-shadow: var(--shadow);
 }
 
 .sidebarHeader {
-  padding: 24px 20px 16px;
+  padding: 20px 20px 16px;
   border-bottom: 1px solid var(--border);
 }
-
 .logo {
   font-size: 22px;
-  font-weight: 700;
+  font-weight: 800;
   letter-spacing: -0.5px;
   color: var(--text-primary);
 }
@@ -38,14 +39,15 @@
 .tagline {
   font-size: 12px;
   color: var(--text-muted);
-  margin-top: 4px;
+  margin-top: 3px;
+  font-weight: 400;
 }
 
 .sidebarBody {
   padding: 20px;
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 18px;
   flex: 1;
 }
 
@@ -85,7 +87,7 @@
   border-radius: var(--radius);
   background: var(--bg-input);
   cursor: pointer;
-  transition: border-color 0.15s, background 0.15s;
+  transition: border-color 0.15s, background 0.15s, box-shadow 0.15s;
   min-height: 100px;
   display: flex;
   align-items: center;
@@ -98,11 +100,13 @@
 .dropZone:focus-visible {
   border-color: var(--accent);
   background: var(--accent-dim);
+  box-shadow: 0 0 0 3px var(--accent-dim);
 }
 
 .dropZoneDragging {
   border-color: var(--accent);
   background: var(--accent-dim);
+  box-shadow: 0 0 0 3px var(--accent-dim);
 }
 
 .dropZoneFilled {
@@ -123,8 +127,9 @@
 }
 
 .dropIcon {
-  font-size: 22px;
-  color: var(--text-muted);
+  font-size: 20px;
+  color: var(--accent);
+  opacity: 0.7;
 }
 
 .dropHint {
@@ -150,7 +155,7 @@
   position: absolute;
   top: 6px;
   right: 6px;
-  background: rgba(0, 0, 0, 0.7);
+  background: rgba(0, 0, 0, 0.65);
   color: #fff;
   border: none;
   border-radius: 50%;
@@ -179,11 +184,12 @@
   border-radius: var(--radius-sm);
   color: var(--text-primary);
   font-size: 13px;
+  font-family: inherit;
   padding: 8px 12px;
   cursor: pointer;
   transition: border-color 0.15s;
   appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%239090a8' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23a09890' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: right 12px center;
   padding-right: 32px;
@@ -194,7 +200,7 @@
   border-color: var(--border-focus);
 }
 
-/* ── Supported surfaces note ── */
+/* ── Example surfaces ── */
 .supportedNote {
   background: var(--bg-input);
   border: 1px solid var(--border);
@@ -220,9 +226,10 @@
 .pill {
   background: var(--accent-dim);
   color: var(--accent);
-  border: 1px solid rgba(108, 99, 255, 0.3);
+  border: 1px solid var(--accent-dim);
   border-radius: 20px;
   font-size: 11px;
+  font-weight: 500;
   padding: 3px 10px;
 }
 
@@ -230,8 +237,8 @@
 .disclaimer {
   font-size: 11px;
   color: var(--text-muted);
-  background: rgba(245, 158, 11, 0.08);
-  border: 1px solid rgba(245, 158, 11, 0.2);
+  background: rgba(217, 119, 6, 0.07);
+  border: 1px solid rgba(217, 119, 6, 0.18);
   border-radius: var(--radius-sm);
   padding: 10px 12px;
   line-height: 1.5;
@@ -247,7 +254,7 @@
 }
 
 .chatHeader {
-  padding: 16px 24px;
+  padding: 14px 24px;
   border-bottom: 1px solid var(--border);
   display: flex;
   align-items: center;
@@ -256,11 +263,40 @@
 }
 
 .chatTitle {
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 600;
-  color: var(--text-secondary);
+  color: var(--text-muted);
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.6px;
+}
+
+.chatHeaderRight {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* ── Theme toggle ── */
+.themeToggle {
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: 20px;
+  padding: 6px 14px;
+  font-size: 13px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  transition: background 0.15s, transform 0.1s;
+  white-space: nowrap;
+}
+
+.themeToggle:hover {
+  background: var(--accent-hover);
+  transform: translateY(-1px);
 }
 
 .clearBtn {
@@ -268,6 +304,7 @@
   border: 1px solid var(--border);
   color: var(--text-muted);
   font-size: 12px;
+  font-family: inherit;
   padding: 4px 12px;
   border-radius: 20px;
   cursor: pointer;
@@ -283,71 +320,101 @@
 .chatMessages {
   flex: 1;
   overflow-y: auto;
-  padding: 24px;
+  padding: 28px 24px;
   display: flex;
   flex-direction: column;
   gap: 16px;
 }
 
-/* ── Empty state ── */
+/* ── Hero / Welcome section ── */
 .emptyState {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   text-align: center;
-  padding: 48px 24px;
-  gap: 12px;
+  padding: 32px 24px;
+  gap: 20px;
   flex: 1;
 }
 
-.welcomeMessage {
+.heroSection {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 6px;
-  margin-bottom: 8px;
+  gap: 12px;
+  max-width: 480px;
 }
 
-.welcomeTitle {
+.heroTitle {
   font-size: 28px;
-  font-weight: 700;
-  color: #a78bfa;
-  letter-spacing: -0.5px;
-}
-
-.welcomeSub {
-  font-size: 13px;
-  color: #7c6fcd;
-  letter-spacing: 0.2px;
-}
-
-.emptyTitle {
-  font-size: 18px;
-  font-weight: 600;
+  font-weight: 800;
   color: var(--text-primary);
+  letter-spacing: -0.6px;
+  line-height: 1.2;
 }
 
-.emptySub {
-  font-size: 14px;
+.heroSubtitle {
+  font-size: 15px;
+  color: var(--text-secondary);
+  line-height: 1.65;
+  max-width: 400px;
+}
+
+.heroSteps {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.heroStep {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 24px;
+  padding: 7px 14px;
+  font-size: 13px;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.heroStepNum {
+  background: var(--accent);
+  color: #fff;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  font-size: 11px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.heroStepArrow {
   color: var(--text-muted);
-  max-width: 380px;
-  line-height: 1.6;
+  font-size: 14px;
 }
 
 .examplePrompts {
   display: flex;
   flex-direction: column;
   gap: 8px;
-  margin-top: 8px;
   width: 100%;
-  max-width: 400px;
+  max-width: 420px;
 }
 
 .examplesLabel {
   font-size: 12px;
   color: var(--text-muted);
   text-align: left;
+  font-weight: 500;
 }
 
 .exampleBtn {
@@ -355,17 +422,19 @@
   border: 1px solid var(--border);
   color: var(--text-secondary);
   font-size: 13px;
+  font-family: inherit;
   padding: 10px 16px;
   border-radius: var(--radius-sm);
   cursor: pointer;
   text-align: left;
-  transition: border-color 0.15s, color 0.15s, background 0.15s;
+  transition: border-color 0.15s, color 0.15s, background 0.15s, box-shadow 0.15s;
 }
 
 .exampleBtn:hover {
   border-color: var(--accent);
   color: var(--text-primary);
   background: var(--accent-dim);
+  box-shadow: 0 2px 8px var(--accent-dim);
 }
 
 /* ── Message bubbles ── */
@@ -376,11 +445,12 @@
   display: flex;
   flex-direction: column;
   gap: 10px;
+  box-shadow: var(--shadow);
 }
 
 .bubbleUser {
   background: var(--accent-dim);
-  border: 1px solid rgba(108, 99, 255, 0.25);
+  border: 1px solid var(--accent-dim);
   align-self: flex-end;
 }
 
@@ -398,11 +468,11 @@
 }
 
 .bubbleRole {
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--text-muted);
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--accent);
   text-transform: uppercase;
-  letter-spacing: 0.4px;
+  letter-spacing: 0.5px;
 }
 
 .bubbleTime {
@@ -413,11 +483,11 @@
 .bubbleText {
   font-size: 14px;
   color: var(--text-primary);
-  line-height: 1.6;
+  line-height: 1.65;
   white-space: pre-wrap;
 }
 
-/* ── Edit plan details ── */
+/* ── Plan details ── */
 .planDetails {
   background: var(--bg-input);
   border: 1px solid var(--border);
@@ -473,6 +543,7 @@
   border-radius: var(--radius-sm);
   overflow: hidden;
   border: 1px solid var(--border);
+  box-shadow: var(--shadow-lg);
 }
 
 .outputImage {
@@ -480,16 +551,17 @@
   max-height: 480px;
   object-fit: contain;
   display: block;
-  background: #000;
+  background: var(--bg);
 }
 
 .downloadBtn {
   position: absolute;
   bottom: 10px;
   right: 10px;
-  background: rgba(0, 0, 0, 0.75);
+  background: rgba(0, 0, 0, 0.7);
   color: #fff;
   font-size: 12px;
+  font-weight: 500;
   padding: 6px 14px;
   border-radius: 20px;
   text-decoration: none;
@@ -504,17 +576,18 @@
   position: absolute;
   bottom: 10px;
   left: 10px;
-  background: rgba(0, 0, 0, 0.75);
+  background: rgba(0, 0, 0, 0.7);
   font-size: 12px;
   font-weight: 600;
   padding: 6px 12px;
   border-radius: 20px;
+  color: #fff;
 }
 
 /* ── Suggestions ── */
 .suggestions {
-  background: rgba(245, 158, 11, 0.08);
-  border: 1px solid rgba(245, 158, 11, 0.2);
+  background: rgba(217, 119, 6, 0.07);
+  border: 1px solid rgba(217, 119, 6, 0.18);
   border-radius: var(--radius-sm);
   padding: 10px 12px;
   font-size: 12px;
@@ -559,7 +632,6 @@
   border: 1px solid var(--border);
   border-radius: var(--radius);
   align-self: flex-start;
-  max-width: 200px;
 }
 
 .loadingDot {
@@ -586,8 +658,8 @@
 
 /* ── Error banner ── */
 .errorBanner {
-  background: rgba(239, 68, 68, 0.1);
-  border: 1px solid rgba(239, 68, 68, 0.3);
+  background: rgba(220, 38, 38, 0.08);
+  border: 1px solid rgba(220, 38, 38, 0.25);
   border-radius: var(--radius-sm);
   color: var(--error);
   font-size: 13px;
@@ -596,12 +668,12 @@
 
 /* ── Input area ── */
 .inputArea {
-  padding: 16px 24px;
+  padding: 16px 24px 20px;
   border-top: 1px solid var(--border);
   background: var(--bg-card);
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 10px;
 }
 
 .inputHint {
@@ -612,20 +684,19 @@
 
 .inputRow {
   display: flex;
-  gap: 10px;
-  align-items: flex-end;
+  gap: 0;
 }
 
 .textarea {
   flex: 1;
   background: var(--bg-input);
   border: 1.5px solid var(--border);
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-sm) var(--radius-sm) 0 0;
   color: var(--text-primary);
   font-size: 14px;
-  padding: 10px 14px;
-  resize: none;
   font-family: inherit;
+  padding: 12px 16px;
+  resize: none;
   line-height: 1.5;
   transition: border-color 0.15s;
 }
@@ -644,43 +715,48 @@
   color: var(--text-muted);
 }
 
-.sendBtn {
+/* ── CTA Generate button ── */
+.ctaBtn {
+  width: 100%;
   background: var(--accent);
   color: #fff;
   border: none;
-  border-radius: var(--radius-sm);
-  height: 44px;
-  padding: 0 18px;
-  font-size: 13px;
-  font-weight: 600;
+  border-radius: 0 0 var(--radius-sm) var(--radius-sm);
+  padding: 14px 24px;
+  font-size: 15px;
+  font-weight: 700;
+  font-family: inherit;
   letter-spacing: 0.2px;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: background 0.15s, opacity 0.15s;
-  flex-shrink: 0;
-  white-space: nowrap;
+  gap: 8px;
+  transition: background 0.15s, transform 0.1s, box-shadow 0.15s;
+  box-shadow: 0 4px 14px var(--accent-dim);
 }
 
-.sendLabel {
-  font-size: 13px;
-  font-weight: 600;
-}
-
-.sendBtn:hover:not(:disabled) {
+.ctaBtn:hover:not(:disabled) {
   background: var(--accent-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px var(--accent-dim);
 }
 
-.sendBtn:disabled {
-  opacity: 0.4;
+.ctaBtn:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.ctaBtn:disabled {
+  opacity: 0.45;
   cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
 }
 
 .sendSpinner {
   width: 16px;
   height: 16px;
-  border: 2px solid rgba(255, 255, 255, 0.3);
+  border: 2px solid rgba(255, 255, 255, 0.35);
   border-top-color: #fff;
   border-radius: 50%;
   animation: spin 0.7s linear infinite;
@@ -692,9 +768,7 @@
 
 /* ── Responsive ── */
 @media (max-width: 768px) {
-  .layout {
-    flex-direction: column;
-  }
+  .layout { flex-direction: column; }
 
   .sidebar {
     width: 100%;
@@ -705,8 +779,8 @@
     border-bottom: 1px solid var(--border);
   }
 
-  .chatPanel {
-    flex: 1;
-    min-height: 0;
-  }
+  .chatPanel { flex: 1; min-height: 0; }
+
+  .heroSteps { flex-direction: column; gap: 6px; }
+  .heroStepArrow { transform: rotate(90deg); }
 }

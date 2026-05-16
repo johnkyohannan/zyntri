@@ -1,21 +1,12 @@
 /**
  * ZyntriStudio – Main Page
- *
- * Conversational surface-restyling assistant.
- * Layout: left panel (inputs) + right panel (chat + output).
  */
 
 import React, { useState, useRef, useCallback, useEffect } from "react";
 import { v4 as uuidv4 } from "uuid";
-import type {
-  ChatMessage,
-  EditResponse,
-  SurfaceCategory,
-} from "../types";
+import type { ChatMessage, EditResponse, SurfaceCategory } from "../types";
 import { SURFACE_LABELS, SUPPORTED_SURFACES } from "../types";
 import styles from "../styles/Home.module.css";
-
-// ─── Helpers ──────────────────────────────────────────────────────────────────
 
 function fileToDataURL(file: File): Promise<string> {
   return new Promise((resolve, reject) => {
@@ -30,8 +21,6 @@ function formatTime(ts: number): string {
   return new Date(ts).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
 }
 
-// ─── Sub-components ───────────────────────────────────────────────────────────
-
 interface ImageDropZoneProps {
   label: string;
   sublabel: string;
@@ -44,24 +33,18 @@ function ImageDropZone({ label, sublabel, value, onChange, required }: ImageDrop
   const inputRef = useRef<HTMLInputElement>(null);
   const [dragging, setDragging] = useState(false);
 
-  const handleFile = useCallback(
-    async (file: File) => {
-      if (!file.type.startsWith("image/")) return;
-      const url = await fileToDataURL(file);
-      onChange(url);
-    },
-    [onChange]
-  );
+  const handleFile = useCallback(async (file: File) => {
+    if (!file.type.startsWith("image/")) return;
+    const url = await fileToDataURL(file);
+    onChange(url);
+  }, [onChange]);
 
-  const handleDrop = useCallback(
-    (e: React.DragEvent) => {
-      e.preventDefault();
-      setDragging(false);
-      const file = e.dataTransfer.files[0];
-      if (file) handleFile(file);
-    },
-    [handleFile]
-  );
+  const handleDrop = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    setDragging(false);
+    const file = e.dataTransfer.files[0];
+    if (file) handleFile(file);
+  }, [handleFile]);
 
   return (
     <div className={styles.dropZoneWrapper}>
@@ -89,9 +72,7 @@ function ImageDropZone({ label, sublabel, value, onChange, required }: ImageDrop
               className={styles.removeBtn}
               onClick={(e) => { e.stopPropagation(); onChange(null); }}
               aria-label="Remove image"
-            >
-              ✕
-            </button>
+            >✕</button>
           </div>
         ) : (
           <div className={styles.dropZonePlaceholder}>
@@ -116,8 +97,6 @@ function ImageDropZone({ label, sublabel, value, onChange, required }: ImageDrop
   );
 }
 
-// ─── Quality badge ────────────────────────────────────────────────────────────
-
 function QualityBadge({ score, passed }: { score: number; passed: boolean }) {
   const pct = Math.round(score * 100);
   const color = passed ? "var(--success)" : score > 0.4 ? "var(--warning)" : "var(--error)";
@@ -127,8 +106,6 @@ function QualityBadge({ score, passed }: { score: number; passed: boolean }) {
     </span>
   );
 }
-
-// ─── Chat message bubble ──────────────────────────────────────────────────────
 
 function MessageBubble({ msg }: { msg: ChatMessage }) {
   const isUser = msg.role === "user";
@@ -144,9 +121,7 @@ function MessageBubble({ msg }: { msg: ChatMessage }) {
         <details className={styles.planDetails}>
           <summary>Mockup steps</summary>
           <ol className={styles.mockupStepsList}>
-            {msg.mockupSteps.map((s, i) => (
-              <li key={i}>{s}</li>
-            ))}
+            {msg.mockupSteps.map((s, i) => <li key={i}>{s}</li>)}
           </ol>
         </details>
       )}
@@ -171,11 +146,7 @@ function MessageBubble({ msg }: { msg: ChatMessage }) {
         <div className={styles.outputImageWrapper}>
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src={msg.outputImageUrl} alt="Edited output" className={styles.outputImage} />
-          <a
-            href={msg.outputImageUrl}
-            download="zyntristudio-output.png"
-            className={styles.downloadBtn}
-          >
+          <a href={msg.outputImageUrl} download="zyntristudio-output.png" className={styles.downloadBtn}>
             ↓ Download
           </a>
           {msg.qualityCheck && (
@@ -188,17 +159,13 @@ function MessageBubble({ msg }: { msg: ChatMessage }) {
         <div className={styles.suggestions}>
           <p className={styles.suggestionsLabel}>Suggestions:</p>
           <ul>
-            {msg.qualityCheck.suggestions.map((s, i) => (
-              <li key={i}>{s}</li>
-            ))}
+            {msg.qualityCheck.suggestions.map((s, i) => <li key={i}>{s}</li>)}
           </ul>
         </div>
       )}
     </div>
   );
 }
-
-// ─── Main component ───────────────────────────────────────────────────────────
 
 export default function Home() {
   const [sessionId] = useState(() => uuidv4());
@@ -209,8 +176,14 @@ export default function Home() {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [darkMode, setDarkMode] = useState(false);
   const chatEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  // Apply theme
+  useEffect(() => {
+    document.documentElement.setAttribute("data-theme", darkMode ? "dark" : "light");
+  }, [darkMode]);
 
   // Auto-scroll chat
   useEffect(() => {
@@ -220,7 +193,6 @@ export default function Home() {
   const handleSubmit = useCallback(async () => {
     if (!baseImage || loading) return;
 
-    // If no instruction typed, auto-generate a sensible default
     const effectiveInstruction = instruction.trim() ||
       (surfaceHint !== "auto"
         ? `Apply this design to the ${surfaceHint.replace("_", " ")}`
@@ -271,21 +243,15 @@ export default function Home() {
       };
 
       setMessages((prev) => [...prev, assistantMsg]);
-
-      if (data.error && !data.outputImageB64) {
-        setError(data.error);
-      }
+      if (data.error && !data.outputImageB64) setError(data.error);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Unknown error");
-      setMessages((prev) => [
-        ...prev,
-        {
-          id: uuidv4(),
-          role: "assistant",
-          content: "Sorry, something went wrong. Please try again.",
-          timestamp: Date.now(),
-        },
-      ]);
+      setMessages((prev) => [...prev, {
+        id: uuidv4(),
+        role: "assistant",
+        content: "Sorry, something went wrong. Please try again.",
+        timestamp: Date.now(),
+      }]);
     } finally {
       setLoading(false);
     }
@@ -302,13 +268,15 @@ export default function Home() {
 
   return (
     <div className={styles.layout}>
-      {/* ── Left panel: inputs ── */}
+      {/* ── Left panel ── */}
       <aside className={styles.sidebar}>
         <div className={styles.sidebarHeader}>
-          <h1 className={styles.logo}>
-            <span className={styles.logoAccent}>Zyntri</span>Studio
-          </h1>
-          <p className={styles.tagline}>Conversational surface-restyling assistant</p>
+          <div>
+            <h1 className={styles.logo}>
+              <span className={styles.logoAccent}>Zyntri</span>Studio
+            </h1>
+            <p className={styles.tagline}>AI-powered design mockups</p>
+          </div>
         </div>
 
         <div className={styles.sidebarBody}>
@@ -340,9 +308,7 @@ export default function Home() {
             >
               <option value="auto">Auto-detect</option>
               {SUPPORTED_SURFACES.map((s) => (
-                <option key={s} value={s}>
-                  {SURFACE_LABELS[s]}
-                </option>
+                <option key={s} value={s}>{SURFACE_LABELS[s]}</option>
               ))}
             </select>
           </div>
@@ -362,45 +328,64 @@ export default function Home() {
         </div>
       </aside>
 
-      {/* ── Right panel: chat ── */}
+      {/* ── Right panel ── */}
       <main className={styles.chatPanel}>
         <div className={styles.chatHeader}>
           <span className={styles.chatTitle}>Design Chat</span>
-          {messages.length > 0 && (
+          <div className={styles.chatHeaderRight}>
+            {messages.length > 0 && (
+              <button className={styles.clearBtn} onClick={() => { setMessages([]); setError(null); }}>
+                Clear
+              </button>
+            )}
             <button
-              className={styles.clearBtn}
-              onClick={() => { setMessages([]); setError(null); }}
+              className={styles.themeToggle}
+              onClick={() => setDarkMode((d) => !d)}
+              aria-label={darkMode ? "Switch to light mode" : "Switch to dark mode"}
+              title={darkMode ? "Switch to light mode" : "Switch to dark mode"}
             >
-              Clear
+              {darkMode ? "☀ Light" : "☾ Dark"}
             </button>
-          )}
+          </div>
         </div>
 
         <div className={styles.chatMessages} role="log" aria-live="polite">
           {messages.length === 0 && !loading && (
             <div className={styles.emptyState}>
-              <div className={styles.welcomeMessage}>
-                <p className={styles.welcomeTitle}>Welcome to ZyntriStudio</p>
-                <p className={styles.welcomeSub}>Your conversational surface-restyling assistant</p>
+              {/* ── Welcome hero ── */}
+              <div className={styles.heroSection}>
+                <h2 className={styles.heroTitle}>Welcome to ZyntriStudio</h2>
+                <p className={styles.heroSubtitle}>
+                  Upload your design and a surface photo, then watch AI place it
+                  with realistic lighting, shadows, and perspective in mere seconds.
+                </p>
+                <div className={styles.heroSteps}>
+                  <div className={styles.heroStep}>
+                    <span className={styles.heroStepNum}>1</span>
+                    <span>Upload your design</span>
+                  </div>
+                  <div className={styles.heroStepArrow}>→</div>
+                  <div className={styles.heroStep}>
+                    <span className={styles.heroStepNum}>2</span>
+                    <span>Add a surface photo</span>
+                  </div>
+                  <div className={styles.heroStepArrow}>→</div>
+                  <div className={styles.heroStep}>
+                    <span className={styles.heroStepNum}>3</span>
+                    <span>Click Generate</span>
+                  </div>
+                </div>
               </div>
-              <p className={styles.emptyTitle}>Get started</p>
-              <p className={styles.emptySub}>
-                Upload your design or pattern, optionally add a surface photo,
-                then describe how you want it applied.
-              </p>
+
               <div className={styles.examplePrompts}>
-                <p className={styles.examplesLabel}>Try asking:</p>
+                <p className={styles.examplesLabel}>Or try a prompt:</p>
                 {[
                   "Apply this floral pattern to a shirt",
                   "Put this design on a wall",
                   "Wrap this artwork around a mug",
                   "Paint this logo onto a grass field",
                 ].map((p) => (
-                  <button
-                    key={p}
-                    className={styles.exampleBtn}
-                    onClick={() => setInstruction(p)}
-                  >
+                  <button key={p} className={styles.exampleBtn} onClick={() => setInstruction(p)}>
                     {p}
                   </button>
                 ))}
@@ -408,9 +393,7 @@ export default function Home() {
             </div>
           )}
 
-          {messages.map((msg) => (
-            <MessageBubble key={msg.id} msg={msg} />
-          ))}
+          {messages.map((msg) => <MessageBubble key={msg.id} msg={msg} />)}
 
           {loading && (
             <div className={styles.loadingBubble}>
@@ -430,10 +413,8 @@ export default function Home() {
           <div ref={chatEndRef} />
         </div>
 
+        {/* ── CTA input area ── */}
         <div className={styles.inputArea}>
-          {!baseImage && (
-            <p className={styles.inputHint}>Upload a design or pattern to get started</p>
-          )}
           <div className={styles.inputRow}>
             <textarea
               ref={textareaRef}
@@ -441,7 +422,7 @@ export default function Home() {
               placeholder={
                 baseImage
                   ? "Describe how to apply the design… or just click Generate"
-                  : "Upload a design or pattern first"
+                  : "Upload a design first, then describe or just click Generate"
               }
               value={instruction}
               onChange={(e) => setInstruction(e.target.value)}
@@ -450,19 +431,25 @@ export default function Home() {
               rows={2}
               aria-label="Edit instruction"
             />
-            <button
-              className={styles.sendBtn}
-              onClick={handleSubmit}
-              disabled={!canSubmit}
-              aria-label="Generate mockup"
-            >
-              {loading ? (
-                <span className={styles.sendSpinner} />
-              ) : (
-                <span className={styles.sendLabel}>Generate</span>
-              )}
-            </button>
           </div>
+          <button
+            className={styles.ctaBtn}
+            onClick={handleSubmit}
+            disabled={!canSubmit}
+            aria-label="Generate mockup"
+          >
+            {loading ? (
+              <>
+                <span className={styles.sendSpinner} />
+                <span>Generating…</span>
+              </>
+            ) : (
+              <span>Generate Mockup</span>
+            )}
+          </button>
+          {!baseImage && (
+            <p className={styles.inputHint}>Upload a design to enable generation</p>
+          )}
         </div>
       </main>
     </div>

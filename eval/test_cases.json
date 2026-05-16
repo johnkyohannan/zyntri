@@ -1,9 +1,8 @@
-
 [
   {
     "id": "tc01",
-    "base_image": "eval/assets/shirt_plain_front.jpg",
-    "reference_image": "eval/assets/floral_pattern.png",
+    "base_image": "eval/assets/reference/floral_pattern.jpg",
+    "reference_image": "eval/assets/base/shirt_white.jpg",
     "instruction": "Apply this floral pattern only to the front of the shirt.",
     "expected_surface": "shirt",
     "expected_behavior": "Pattern appears on shirt front only; face, arms, and background stay unchanged.",
@@ -11,53 +10,53 @@
   },
   {
     "id": "tc02",
-    "base_image": "eval/assets/shirt_plain_front_2.jpg",
-    "reference_image": "eval/assets/sports_logo.png",
+    "base_image": "eval/assets/reference/sports_logo.png",
+    "reference_image": "eval/assets/base/shirt_plain.jpg",
     "instruction": "Put this logo in the center of the shirt and keep everything else the same.",
     "expected_surface": "shirt",
-    "expected_behavior": "Logo centered on shirt; no spill to skin/background.",
+    "expected_behavior": "Logo centered on shirt; no spill to skin or background.",
     "pass_criteria": "Centered logo placement on shirt only."
   },
   {
     "id": "tc03",
-    "base_image": "eval/assets/dorm_wall_blank.jpg",
-    "reference_image": "eval/assets/poster_art_blue.png",
-    "instruction": "Place this artwork as a flat poster on the blank wall above the desk.",
+    "base_image": "eval/assets/reference/poster_artwork.jpg",
+    "reference_image": "eval/assets/base/wall_plain.jpg",
+    "instruction": "Place this artwork as a flat poster on the blank wall.",
     "expected_surface": "wall",
-    "expected_behavior": "Artwork appears on wall only; desk/lamp unchanged.",
-    "pass_criteria": "Wall-only edit with preserved furniture."
+    "expected_behavior": "Artwork appears on wall only; surrounding objects unchanged.",
+    "pass_criteria": "Wall-only edit with preserved surroundings."
   },
   {
     "id": "tc04",
-    "base_image": "eval/assets/living_room_wall.jpg",
-    "reference_image": "eval/assets/brick_texture.jpg",
-    "instruction": "Make the main wall look like exposed brick, but do not change the couch.",
+    "base_image": "eval/assets/reference/floral_pattern.jpg",
+    "reference_image": "eval/assets/base/wall_smooth.jpg",
+    "instruction": "Make the main wall look like it has this pattern on it, but do not change anything else.",
     "expected_surface": "wall",
-    "expected_behavior": "Brick texture applied to wall only.",
+    "expected_behavior": "Pattern applied to wall only.",
     "pass_criteria": "Requested wall changes only."
   },
   {
     "id": "tc05",
-    "base_image": "eval/assets/plain_mug.jpg",
-    "reference_image": "eval/assets/floral_art_wrap.png",
+    "base_image": "eval/assets/reference/floral_drawing.jpg",
+    "reference_image": "eval/assets/base/mug_plain.jpg",
     "instruction": "Wrap this floral artwork around the mug and keep the table unchanged.",
     "expected_surface": "mug",
     "expected_behavior": "Artwork placed on mug body only.",
-    "pass_criteria": "Mug edited without altering table/background."
+    "pass_criteria": "Mug edited without altering table or background."
   },
   {
     "id": "tc06",
-    "base_image": "eval/assets/notebook_closed.jpg",
-    "reference_image": "eval/assets/sticker_sheet.png",
+    "base_image": "eval/assets/reference/sticker_design.png",
+    "reference_image": "eval/assets/base/notebook_closed.jpg",
     "instruction": "Add this sticker design to the notebook cover only.",
     "expected_surface": "notebook",
-    "expected_behavior": "Sticker/design appears on notebook cover.",
+    "expected_behavior": "Sticker design appears on notebook cover.",
     "pass_criteria": "Notebook cover edited only."
   },
   {
     "id": "tc07",
-    "base_image": "eval/assets/notebook_closed_2.jpg",
-    "reference_image": "eval/assets/anime_cover_art.png",
+    "base_image": "eval/assets/reference/anime_artwork.jpg",
+    "reference_image": "eval/assets/base/notebook_plain.jpg",
     "instruction": "Turn the notebook cover into this style, but keep the desk unchanged.",
     "expected_surface": "notebook",
     "expected_behavior": "Notebook cover restyled; desk preserved.",
@@ -65,17 +64,17 @@
   },
   {
     "id": "tc08",
-    "base_image": "eval/assets/poster_frame_blank.jpg",
-    "reference_image": "eval/assets/alt_movie_poster.png",
+    "base_image": "eval/assets/reference/alternate_artwork.jpg",
+    "reference_image": "eval/assets/base/poster_frame.jpg",
     "instruction": "Replace the blank poster area with this artwork.",
     "expected_surface": "poster",
     "expected_behavior": "Artwork appears inside poster area only.",
-    "pass_criteria": "Poster region updated without changing frame/wall."
+    "pass_criteria": "Poster region updated without changing frame or wall."
   },
   {
     "id": "tc09",
-    "base_image": "eval/assets/cardboard_box_plain.jpg",
-    "reference_image": "eval/assets/brand_label.png",
+    "base_image": "eval/assets/reference/brand_design.png",
+    "reference_image": "eval/assets/base/cardboard_box.jpg",
     "instruction": "Put this label design on the front face of the box only.",
     "expected_surface": "cardboard_box",
     "expected_behavior": "Label applied to front panel only.",
@@ -83,8 +82,8 @@
   },
   {
     "id": "tc10",
-    "base_image": "eval/assets/grass_field.jpg",
-    "reference_image": "eval/assets/soccer_logo.png",
+    "base_image": "eval/assets/reference/soccer_logo.png",
+    "reference_image": "eval/assets/base/grass_field.jpg",
     "instruction": "Place this logo on the center of the field without changing the sky or stands.",
     "expected_surface": "field_grass",
     "expected_behavior": "Logo appears on grass region only.",

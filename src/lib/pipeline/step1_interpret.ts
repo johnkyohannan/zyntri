@@ -59,12 +59,16 @@ export async function interpretRequest(
   const client = getOpenAIClient();
 
   const imageBlocks: OpenAI.Chat.ChatCompletionContentPart[] = [
-    { type: "image_url", image_url: { url: designImageB64, detail: "high" } },
+    // Design image: low detail — we only need to know what kind of design it is,
+    // not pixel-level analysis. Saves tokens and latency.
+    { type: "image_url", image_url: { url: designImageB64, detail: "low" } },
   ];
 
   if (surfaceImageB64) {
     imageBlocks.push({
       type: "image_url",
+      // Surface photo: high detail — we need to accurately identify the surface
+      // type and any objects that should be preserved (TV, clock, furniture).
       image_url: { url: surfaceImageB64, detail: "high" },
     });
   }

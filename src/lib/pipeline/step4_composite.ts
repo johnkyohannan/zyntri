@@ -53,9 +53,18 @@ async function getSurfaceBoundingBox(
 ): Promise<BoundingBox> {
   const client = getOpenAIClient();
 
+  // Downscale to 512px before sending for bbox detection — we only need
+  // rough coordinates, not full resolution. Saves ~60% of image token cost.
+  const surfaceBuffer = Buffer.from(surfaceB64.replace(/^data:image\/\w+;base64,/, ""), "base64");
+  const smallBuffer = await sharp(surfaceBuffer)
+    .resize(512, 512, { fit: "inside" })
+    .jpeg({ quality: 70 })
+    .toBuffer();
+  const smallB64 = `data:image/jpeg;base64,${smallBuffer.toString("base64")}`;
+
   const response = await client.chat.completions.create({
     model: "gpt-4o-mini",
-    max_tokens: 150,
+    max_tokens: 80,   // bbox JSON is tiny — {"x":0.1,"y":0.05,"w":0.8,"h":0.7}
     temperature: 0.0,
     messages: [
       {
@@ -86,7 +95,7 @@ Rules:
       {
         role: "user",
         content: [
-          { type: "image_url", image_url: { url: surfaceB64, detail: "high" } },
+          { type: "image_url", image_url: { url: smallB64, detail: "low" } },
           { type: "text", text: `Return the bounding box for the "${targetSurface}" surface.` },
         ] as OpenAI.Chat.ChatCompletionContentPart[],
       },

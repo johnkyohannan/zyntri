@@ -52,6 +52,8 @@ export async function generateEditPlan(
   if (designImageB64) {
     contentParts.push({
       type: "image_url",
+      // Low detail is sufficient for plan generation — we just need to know
+      // the design's general style, not fine pixel details.
       image_url: { url: designImageB64, detail: "low" },
     });
   }

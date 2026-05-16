@@ -23,7 +23,7 @@ Upload a design and a photo of the surface you want it applied to. A shirt, wall
 ### 1. Clone
 
 ```bash
-git clone <your-repo-url>
+git clone <https://github.com/johnkyohannan/zyntri.git>
 cd zyntri-studio
 ```
 
@@ -75,6 +75,7 @@ npm run eval
 VERSION=v2 npm run eval
 VERSION=v3 npm run eval
 ```
+Note: Before running, place your test images in eval/assets/base/ (surface photos) and eval/assets/reference/ (design images) matching the filenames in test_cases.json. Images must be JPEG or PNG.
 
 ---
 

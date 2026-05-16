@@ -214,6 +214,7 @@ async function gptImageEdit(
     `Place the design from the second image onto ${surfaceLabel}.`,
     `Use the exact design from the second image — do not invent, replace, or alter it.`,
     `The design should appear physically applied to the surface: adapt its lighting, shadows, and perspective to match the surface.`,
+    `Blend the edges of the design naturally into the surface so there are no harsh borders or visible cutlines.`,
     `The wall color, wall texture, and all existing objects (furniture, clock, TV, artwork, decorations) must remain completely unchanged.`,
     `Only fill the transparent masked region. Every opaque pixel outside the mask must be pixel-perfect identical to the original photo.`,
     `Photorealistic, high quality mockup.`,

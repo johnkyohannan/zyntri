@@ -21,7 +21,7 @@
     "id": "tc03",
     "base_image": "eval/assets/reference/poster_artwork.jpg",
     "reference_image": "eval/assets/base/wall_plain.jpg",
-    "instruction": "Place this artwork as a flat poster on the blank wall.",
+    "instruction": "Apply this artwork directly onto the wall surface.",
     "expected_surface": "wall",
     "expected_behavior": "Artwork appears on wall only; surrounding objects unchanged.",
     "pass_criteria": "Wall-only edit with preserved surroundings."

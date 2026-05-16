@@ -40,7 +40,7 @@ Respond ONLY with a valid JSON object matching this exact schema:
 
 Rules:
 - detectedSurfaces: list every supported surface visible in the surface photo (second image), or inferred from the instruction if no surface photo is provided.
-- primarySurface: the single best match for the user's instruction, or null if none.
+- primarySurface: the single best match based on what surface is VISIBLE IN THE PHOTO, not what the instruction says. If the instruction says "place as a poster on the wall" but the photo shows a wall, primarySurface should be "wall" not "poster". Only return "poster" if an actual framed poster is visible in the surface photo.
 - isAmbiguous: true when two or more surfaces are equally plausible targets.
 - clarificationQuestion: a short, friendly question to ask the user when isAmbiguous is true.
 - confidence: your certainty that primarySurface is correct (0–1).

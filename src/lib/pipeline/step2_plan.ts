@@ -29,10 +29,11 @@ Respond ONLY with a valid JSON object matching this exact schema:
 
 Guidelines:
 - blendMode "multiply" works well for dark patterns on light surfaces.
-- blendMode "overlay" works well for textures that should respect surface shading.
+- blendMode "overlay" works well for textures and artwork that should respect surface shading and lighting. Prefer this for logos and stickers on shirts, mugs, and notebooks.
 - blendMode "soft_light" is good for subtle color shifts.
-- opacity 0.7–0.9 is typical; lower for subtle effects.
-- preserveShading: true when the surface has visible folds, curves, or shadows.
+- blendMode "normal" should only be used for flat surfaces like posters and boxes where no shading integration is needed.
+- opacity: use 0.85–0.95 for logos and stickers on curved/fabric surfaces so surface texture shows through slightly and edges blend naturally. Use 1.0 only for flat poster/box replacements.
+- preserveShading: true when the surface has visible folds, curves, or shadows (shirt, mug, notebook). This is critical for realistic integration.
 - perspectiveAware: true for flat surfaces like walls, posters, boxes.
 - warningFlags: list any concerns (e.g., "surface partially occluded", "low contrast reference").
 Do NOT include any text outside the JSON object.`;

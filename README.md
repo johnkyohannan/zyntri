@@ -23,7 +23,7 @@ Upload a design and a photo of the surface you want it applied to. A shirt, wall
 ### 1. Clone
 
 ```bash
-git clone <https://github.com/johnkyohannan/zyntri.git>
+git clone https://github.com/johnkyohannan/zyntri.git
 cd zyntri-studio
 ```
 
@@ -59,7 +59,7 @@ Open [http://localhost:3000](http://localhost:3000).
 
 1. Upload your design or artwork in the left panel (required)
 2. Upload a surface photo and specify the object or room you want the design applied to (required)
-2. Select a target surface from the dropdown, or leave it on Auto-detect
+3. Select a target surface from the dropdown, or leave it on Auto-detect
 4. Click Generate or type a specific instruction first, like "put this on the wall above the TV"
 5. View the result, quality score, and explanation in the chat panel
 6. Refine with follow-up messages like "make it smaller" or "move it to the left"

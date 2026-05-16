@@ -1,12 +1,12 @@
 {
   "version": "v3",
-  "timestamp": "2026-05-16T01:36:38.538Z",
+  "timestamp": "2026-05-16T02:17:55.123Z",
   "totalCases": 10,
-  "passed": 9,
-  "failed": 1,
-  "accuracy": 0.9,
-  "avgScore": 0.8700000000000001,
-  "avgDurationMs": 31062.5,
+  "passed": 8,
+  "failed": 2,
+  "accuracy": 0.8,
+  "avgScore": 0.835,
+  "avgDurationMs": 34467.4,
   "results": [
     {
       "id": "tc01",
@@ -32,7 +32,7 @@
         "preserveShading": true,
         "perspectiveAware": false,
         "colorAdjustment": null,
-        "additionalNotes": "Apply the floral pattern to the front of the shirt only.",
+        "additionalNotes": "Apply the floral pattern only to the front of the shirt.",
         "estimatedDifficulty": "medium",
         "warningFlags": []
       },
@@ -43,14 +43,14 @@
         "suggestions": [],
         "summary": "The floral pattern is correctly applied to the front of the shirt with no visible issues."
       },
-      "assistantMessage": "I've successfully applied the floral pattern to the front of the shirt, as you requested. To achieve a realistic look, I carefully centered the design and ensured it matched the shirt's lighting and perspective, blending seamlessly with the fabric texture. Everything outside the pattern area remains untouched, preserving the shirt's original details. If you'd like, you could consider trying a different color variation of the pattern for added visual interest.",
+      "assistantMessage": "I've successfully applied the floral pattern only to the front of your shirt, as you requested. To ensure a realistic look, I carefully detected the shirt area and centered the design in a way that matches the shirt's lighting and perspective. Everything outside the pattern was preserved, maintaining the original texture and colors of the shirt. If you'd like to refine the mockup further, consider trying a different color scheme for the floral pattern to see how it complements the shirt better!",
       "failureReason": null,
-      "durationMs": 32938
+      "durationMs": 35054
     },
     {
       "id": "tc02",
-      "passed": true,
-      "score": 0.9,
+      "passed": false,
+      "score": 0.6,
       "interpretation": {
         "detectedSurfaces": [
           "shirt"
@@ -71,20 +71,26 @@
         "preserveShading": true,
         "perspectiveAware": false,
         "colorAdjustment": null,
-        "additionalNotes": "Center the logo on the shirt while maintaining the original shirt design.",
+        "additionalNotes": "Place logo in the center of the shirt.",
         "estimatedDifficulty": "easy",
         "warningFlags": []
       },
       "qualityCheck": {
-        "passed": true,
-        "score": 0.9,
-        "issues": [],
-        "suggestions": [],
-        "summary": "The logo is centered correctly on the shirt with no visible issues."
+        "passed": false,
+        "score": 0.6,
+        "issues": [
+          "Logo is not centered properly on the shirt.",
+          "Color of the logo appears slightly off compared to the original."
+        ],
+        "suggestions": [
+          "Reposition the logo to ensure it is centered.",
+          "Adjust the color to match the original logo more closely."
+        ],
+        "summary": "The logo placement is misaligned and the color needs adjustment."
       },
-      "assistantMessage": "I've placed your logo in the center of the shirt while keeping everything else intact, just as you requested. To achieve a realistic look, I carefully resized and positioned the design so it fits perfectly on the shirt, matching the lighting and perspective of the fabric. The shirt's color and texture remain unchanged, ensuring a natural appearance. If you'd like, we could try experimenting with different colors or textures for the shirt to see how they complement your logo better.",
-      "failureReason": null,
-      "durationMs": 27485
+      "assistantMessage": "I've centered your logo on the shirt as you requested, ensuring that everything else remains unchanged. To make the mockup look realistic, I carefully resized the shirt photo and placed your design in the center, matching the lighting and perspective to blend seamlessly with the fabric's texture. Everything outside the logo area has been preserved, so the shirt's original look is maintained. If you'd like, we could try experimenting with different placements or colors for the logo to see how they enhance the overall design.",
+      "failureReason": "quality_too_low(60%)",
+      "durationMs": 31023
     },
     {
       "id": "tc03",
@@ -110,7 +116,7 @@
         "preserveShading": false,
         "perspectiveAware": true,
         "colorAdjustment": null,
-        "additionalNotes": "Apply the artwork directly without any blending effects.",
+        "additionalNotes": "Apply the artwork directly with no blending effects.",
         "estimatedDifficulty": "easy",
         "warningFlags": []
       },
@@ -119,11 +125,11 @@
         "score": 0.9,
         "issues": [],
         "suggestions": [],
-        "summary": "The artwork transfer is clearly visible and correctly applied to the wall surface with no major artifacts."
+        "summary": "The artwork is clearly applied to the wall surface with no major artifacts."
       },
-      "assistantMessage": "I've successfully applied your artwork directly onto the wall surface you provided. To ensure a realistic look, I resized the surface photo and centered your design, carefully preserving the surrounding wall color and texture. I blended the artwork with the existing lighting and perspective, so it looks like it's truly part of the wall. If you notice any quality issues or if the colors don’t match your expectations, we could refine the design or adjust the lighting further for a better fit. Let me know how you'd like to proceed!",
+      "assistantMessage": "I've applied your artwork directly onto the wall surface as you requested. To make the mockup look realistic, I carefully centered your design and ensured it matched the wall's lighting and perspective, while preserving the wall's color and texture. Everything outside the design remains untouched, keeping the overall look seamless. If you'd like to refine the mockup further, consider adjusting the size or position of the artwork to see how it changes the visual impact!",
       "failureReason": null,
-      "durationMs": 29843
+      "durationMs": 37697
     },
     {
       "id": "tc04",
@@ -149,7 +155,7 @@
         "preserveShading": false,
         "perspectiveAware": true,
         "colorAdjustment": null,
-        "additionalNotes": "Apply the provided floral pattern directly to the wall surface.",
+        "additionalNotes": "Apply the provided pattern uniformly across the wall surface.",
         "estimatedDifficulty": "easy",
         "warningFlags": []
       },
@@ -158,11 +164,11 @@
         "score": 0.9,
         "issues": [],
         "suggestions": [],
-        "summary": "The pattern is clearly applied to the wall with no visible issues."
+        "summary": "The pattern is clearly applied to the main wall with no visible artifacts."
       },
-      "assistantMessage": "I've applied the pattern to the wall while keeping everything else in the image untouched, just as you requested. To achieve a realistic look, I ensured the pattern was centered and proportionately sized to blend seamlessly with the wall's existing color and texture. I also matched the lighting and perspective for a natural appearance. If you notice any areas where the pattern doesn't align perfectly, we could refine the placement or adjust the scale further for an even better fit.",
+      "assistantMessage": "I've applied your requested pattern to the main wall while preserving everything else in the image. The design was carefully centered and blended with the wall's texture and lighting, ensuring it looks natural and integrated into the space. You should see a realistic effect, but if you notice any minor mismatches in texture or color, let me know! For a finer touch, consider experimenting with different color variations of the pattern to see what complements the wall best.",
       "failureReason": null,
-      "durationMs": 29044
+      "durationMs": 28854
     },
     {
       "id": "tc05",
@@ -188,7 +194,7 @@
         "preserveShading": true,
         "perspectiveAware": false,
         "colorAdjustment": null,
-        "additionalNotes": "Wrap the floral artwork around the mug while maintaining the original table texture.",
+        "additionalNotes": "Wrap the floral artwork around the mug while keeping the table unchanged.",
         "estimatedDifficulty": "medium",
         "warningFlags": []
       },
@@ -199,9 +205,9 @@
         "suggestions": [],
         "summary": "The floral artwork is well applied around the mug with no visible issues."
       },
-      "assistantMessage": "I’ve successfully wrapped your beautiful floral artwork around the mug while keeping the table unchanged. To achieve a realistic look, I carefully scaled the design to fit perfectly on the mug’s surface and adjusted the lighting and perspective to match the mug’s contours. Everything outside the design area, including the table, remains untouched, ensuring a seamless integration. If you’d like to refine the mockup further, consider trying different color variations for the artwork to see what complements the mug best!",
+      "assistantMessage": "I've wrapped your beautiful floral artwork around the mug while keeping the table unchanged, just as you requested. To achieve a realistic look, I carefully placed the design on the mug, ensuring it matched the lighting and perspective of the surface. The colors and textures of the mug were preserved, maintaining the integrity of the original photo. If you'd like, we could explore adjusting the brightness or contrast of the design to make it pop even more against the mug.",
       "failureReason": null,
-      "durationMs": 27273
+      "durationMs": 33021
     },
     {
       "id": "tc06",
@@ -227,7 +233,7 @@
         "preserveShading": true,
         "perspectiveAware": false,
         "colorAdjustment": null,
-        "additionalNotes": "Ensure the sticker blends naturally with the notebook cover texture.",
+        "additionalNotes": "Ensure the sticker blends well with the notebook cover texture.",
         "estimatedDifficulty": "easy",
         "warningFlags": []
       },
@@ -236,22 +242,22 @@
         "score": 0.6,
         "issues": [
           "Sticker design is not properly aligned with the notebook cover.",
-          "There is a noticeable cut-out edge that detracts from the overall appearance."
+          "There is a noticeable edge around the sticker that does not blend well with the background."
         ],
         "suggestions": [
-          "Realign the sticker to fit the notebook cover more naturally.",
-          "Smooth out the edges of the sticker to blend better with the background."
+          "Adjust the alignment of the sticker to fit the notebook cover more naturally.",
+          "Consider refining the edges of the sticker to improve blending."
         ],
-        "summary": "The edit has noticeable alignment issues and cut-out artifacts."
+        "summary": "The edit is partially applied but has noticeable alignment and blending issues."
       },
-      "assistantMessage": "I've added your sticker design to the notebook cover as you requested. To make the mockup look realistic, I carefully centered your design on the notebook, ensuring it matched the lighting and perspective for a natural appearance. I preserved the original colors and textures of the notebook, so everything outside the design remains intact. If you’d like, we could refine the placement further or try different angles to see how it complements the notebook even better.",
+      "assistantMessage": "I've added your sticker design to the notebook cover as you requested. To make it look realistic, I carefully centered the design and adjusted its size to fit perfectly within the notebook's dimensions, while ensuring the original background was preserved. The lighting and perspective were matched to create a seamless blend with the notebook's surface texture. If you notice any discrepancies or quality issues, please let me know. For a follow-up refinement, you could try experimenting with different color variations of the sticker to see how they complement the notebook cover.",
       "failureReason": "quality_too_low(60%)",
-      "durationMs": 33661
+      "durationMs": 31760
     },
     {
       "id": "tc07",
       "passed": true,
-      "score": 0.9,
+      "score": 0.85,
       "interpretation": {
         "detectedSurfaces": [
           "notebook"
@@ -272,20 +278,24 @@
         "preserveShading": true,
         "perspectiveAware": false,
         "colorAdjustment": null,
-        "additionalNotes": "Apply the design style to the notebook cover while keeping the desk unchanged.",
+        "additionalNotes": "Apply the design style while keeping the desk area unchanged.",
         "estimatedDifficulty": "medium",
         "warningFlags": []
       },
       "qualityCheck": {
         "passed": true,
-        "score": 0.9,
-        "issues": [],
-        "suggestions": [],
-        "summary": "The edit is clearly visible and correctly applied to the notebook cover with no major artifacts."
+        "score": 0.85,
+        "issues": [
+          "Slight color shift in the notebook cover compared to the original style."
+        ],
+        "suggestions": [
+          "Adjust the color balance to better match the original style."
+        ],
+        "summary": "The edit is visible and mostly correct, with minor color issues."
       },
-      "assistantMessage": "I've successfully applied your desired design style to the notebook cover while keeping the desk unchanged. The notebook area was carefully detected and resized to ensure a perfect fit for the design, which was centered and blended beautifully with the notebook's lighting and perspective. Everything outside the notebook has been preserved as you requested, so the desk remains untouched. If you'd like to refine the design further, consider adjusting the colors or patterns to better match the overall aesthetic of your workspace.",
+      "assistantMessage": "I've successfully transformed the notebook cover while keeping the desk unchanged, just as you requested. To achieve a realistic look, I carefully detected the notebook area, resized it appropriately, and centered your design to fit perfectly within the specified bounds. The lighting and perspective were matched to ensure that the design integrates seamlessly with the notebook's surface. If you have any concerns about color matching or want to explore different design placements, I’d be happy to help with that!",
       "failureReason": null,
-      "durationMs": 36976
+      "durationMs": 45030
     },
     {
       "id": "tc08",
@@ -320,11 +330,11 @@
         "score": 0.9,
         "issues": [],
         "suggestions": [],
-        "summary": "The artwork transfer is clearly visible and correctly applied with no major artifacts."
+        "summary": "The artwork transfer is clearly visible and correctly applied to the target surface with no major artifacts."
       },
-      "assistantMessage": "I've replaced the blank poster area with your artwork, and the mockup now reflects a realistic presentation on the poster surface. To achieve this, I carefully centered your design within the specified dimensions and ensured it matched the lighting and perspective of the original photo. Everything outside the masked area, including the wall color and texture, has been preserved to maintain a natural look. If you'd like, we can refine the mockup by adjusting the brightness or contrast of the artwork to better blend with the surroundings.",
+      "assistantMessage": "I've replaced the blank poster area with your artwork, fitting it perfectly into the designated surface. To achieve a realistic look, I resized the artwork to match the poster dimensions and ensured it blended seamlessly with the wall's color and texture, while preserving all surrounding elements. Everything outside of the poster area remains untouched, keeping the original environment intact. If you'd like, we can refine the mockup further by adjusting the lighting effects or adding a shadow to enhance depth.",
       "failureReason": null,
-      "durationMs": 29396
+      "durationMs": 34383
     },
     {
       "id": "tc09",
@@ -350,7 +360,7 @@
         "preserveShading": false,
         "perspectiveAware": true,
         "colorAdjustment": null,
-        "additionalNotes": "Apply the label design to the front face of the box.",
+        "additionalNotes": "Apply the label design to the front face of the box only.",
         "estimatedDifficulty": "easy",
         "warningFlags": []
       },
@@ -361,9 +371,9 @@
         "suggestions": [],
         "summary": "The label design is correctly applied to the front face of the box with no visible issues."
       },
-      "assistantMessage": "I've successfully placed your label design on the front face of the cardboard box as you requested. To make it look realistic, I centered the design and ensured it fits perfectly within the designated area while preserving the original texture and color of the box. The lighting and perspective were adjusted to blend the design seamlessly with the surface, enhancing its appearance. If you'd like, consider trying a different color or texture for the box to see how it complements your label design even more!",
+      "assistantMessage": "I've successfully placed your label design on the front face of the cardboard box, as you requested. To ensure a realistic appearance, I carefully scaled the design and positioned it centrally, while preserving the original texture and color of the cardboard. The lighting and perspective were adjusted to match the surface, creating a seamless integration. Please note that if you have any specific color adjustments or variations in mind, let me know, and we can refine it further!",
       "failureReason": null,
-      "durationMs": 35619
+      "durationMs": 36810
     },
     {
       "id": "tc10",
@@ -389,7 +399,7 @@
         "preserveShading": false,
         "perspectiveAware": false,
         "colorAdjustment": null,
-        "additionalNotes": "Place the logo at the center of the field.",
+        "additionalNotes": "Place logo at the center of the field.",
         "estimatedDifficulty": "easy",
         "warningFlags": []
       },
@@ -400,9 +410,9 @@
         "suggestions": [],
         "summary": "The logo is clearly visible and correctly placed on the field without any major artifacts."
       },
-      "assistantMessage": "I've placed your logo right at the center of the field, ensuring the sky and stands remain untouched. To achieve a realistic look, I resized the surface photo and carefully masked the area where the logo was placed, matching the lighting and perspective of the field. Everything outside that area was preserved, keeping the original photo intact. If you’d like to enhance the mockup further, consider adding a subtle shadow beneath the logo to give it more depth and make it feel more integrated with the grass.",
+      "assistantMessage": "I've placed your logo right at the center of the field, ensuring that the sky and stands remain untouched. To achieve a realistic look, I resized the surface photo and carefully blended your design with the grass texture, matching the lighting and perspective so it looks natural in its environment. Everything outside the masked area has been preserved perfectly, so you can enjoy the original setting. If you’d like to refine it further, consider adjusting the logo's size or exploring different placements for even more impact!",
       "failureReason": null,
-      "durationMs": 28390
+      "durationMs": 31042
     }
   ]
 }

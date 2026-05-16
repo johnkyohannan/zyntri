@@ -218,12 +218,18 @@ export default function Home() {
   }, [messages]);
 
   const handleSubmit = useCallback(async () => {
-    if (!instruction.trim() || !baseImage || loading) return;
+    if (!baseImage || loading) return;
+
+    // If no instruction typed, auto-generate a sensible default
+    const effectiveInstruction = instruction.trim() ||
+      (surfaceHint !== "auto"
+        ? `Apply this design to the ${surfaceHint.replace("_", " ")}`
+        : "Apply this design to the surface");
 
     const userMsg: ChatMessage = {
       id: uuidv4(),
       role: "user",
-      content: instruction.trim(),
+      content: effectiveInstruction,
       timestamp: Date.now(),
     };
 
@@ -292,7 +298,7 @@ export default function Home() {
     }
   };
 
-  const canSubmit = !!baseImage && !!instruction.trim() && !loading;
+  const canSubmit = !!baseImage && !loading;
 
   return (
     <div className={styles.layout}>
@@ -342,7 +348,7 @@ export default function Home() {
           </div>
 
           <div className={styles.supportedNote}>
-            <p className={styles.supportedTitle}>Supported surfaces (v1)</p>
+            <p className={styles.supportedTitle}>Example surfaces</p>
             <div className={styles.surfacePills}>
               {SUPPORTED_SURFACES.map((s) => (
                 <span key={s} className={styles.pill}>{SURFACE_LABELS[s]}</span>
@@ -434,7 +440,7 @@ export default function Home() {
               className={styles.textarea}
               placeholder={
                 baseImage
-                  ? "Describe how to apply the design… (Enter to send, Shift+Enter for newline)"
+                  ? "Describe how to apply the design… or just click Generate"
                   : "Upload a design or pattern first"
               }
               value={instruction}
@@ -448,12 +454,12 @@ export default function Home() {
               className={styles.sendBtn}
               onClick={handleSubmit}
               disabled={!canSubmit}
-              aria-label="Send"
+              aria-label="Generate mockup"
             >
               {loading ? (
                 <span className={styles.sendSpinner} />
               ) : (
-                <span>→</span>
+                <span className={styles.sendLabel}>Generate</span>
               )}
             </button>
           </div>

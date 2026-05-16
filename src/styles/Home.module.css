@@ -649,15 +649,23 @@
   color: #fff;
   border: none;
   border-radius: var(--radius-sm);
-  width: 44px;
   height: 44px;
-  font-size: 18px;
+  padding: 0 18px;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.2px;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   transition: background 0.15s, opacity 0.15s;
   flex-shrink: 0;
+  white-space: nowrap;
+}
+
+.sendLabel {
+  font-size: 13px;
+  font-weight: 600;
 }
 
 .sendBtn:hover:not(:disabled) {

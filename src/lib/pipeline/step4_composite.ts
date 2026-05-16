@@ -286,11 +286,15 @@ async function dalleGenerate(
     n: 1,
     size: "1024x1024",
     quality: "hd",
-    response_format: "b64_json",
   });
 
-  const b64 = response.data[0]?.b64_json;
-  if (!b64) throw new Error("No image returned from DALL-E 3.");
+  const url = response.data[0]?.url;
+  if (!url) throw new Error("No image returned from DALL-E 3.");
+
+  // Fetch the image and convert to base64
+  const imgResponse = await fetch(url);
+  const arrayBuffer = await imgResponse.arrayBuffer();
+  const b64 = Buffer.from(arrayBuffer).toString("base64");
 
   steps.push("DALL-E 3 generated a photorealistic mockup scene.");
   return `data:image/png;base64,${b64}`;

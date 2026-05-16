@@ -316,7 +316,7 @@ export default function Home() {
 
           <ImageDropZone
             label="Surface Photo"
-            sublabel="Optional: the object or surface to apply the design onto"
+            sublabel="The object or surface to apply the design onto"
             value={referenceImage}
             onChange={setReferenceImage}
           />

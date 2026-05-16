@@ -57,21 +57,47 @@ const ASSETS_DIR = path.resolve(__dirname, "assets");
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
-function loadImageAsDataURL(imagePath: string): string | null {
+function detectMimeType(buffer: Buffer): string {
+  if (buffer[0] === 0xff && buffer[1] === 0xd8) return "image/jpeg";
+  if (buffer[0] === 0x89 && buffer[1] === 0x50 && buffer[2] === 0x4e && buffer[3] === 0x47) return "image/png";
+  if (buffer[0] === 0x47 && buffer[1] === 0x49 && buffer[2] === 0x46) return "image/gif";
+  if (buffer[0] === 0x52 && buffer[1] === 0x49 && buffer[2] === 0x46 && buffer[3] === 0x46) return "image/webp";
+  // HEIC/HEIF: ftyp box — starts with 4-byte size then "ftyp"
+  if (buffer[4] === 0x66 && buffer[5] === 0x74 && buffer[6] === 0x79 && buffer[7] === 0x70) return "image/heic";
+  return "image/jpeg";
+}
+
+async function loadImageAsDataURL(imagePath: string): Promise<string | null> {
   const absPath = path.resolve(__dirname, "..", imagePath);
-  if (!fs.existsSync(absPath)) {
-    return null;
+  if (!fs.existsSync(absPath)) return null;
+
+  let data = fs.readFileSync(absPath);
+  const mime = detectMimeType(data);
+
+  // OpenAI vision only accepts jpeg, png, gif, webp.
+  if (mime === "image/webp") {
+    // WebP: sharp can handle this
+    const sharp = require("sharp");
+    data = await sharp(data).jpeg({ quality: 90 }).toBuffer();
+    return `data:image/jpeg;base64,${data.toString("base64")}`;
   }
-  const ext = path.extname(absPath).toLowerCase().replace(".", "");
-  const mimeMap: Record<string, string> = {
-    jpg: "image/jpeg",
-    jpeg: "image/jpeg",
-    png: "image/png",
-    webp: "image/webp",
-  };
-  const mime = mimeMap[ext] ?? "image/jpeg";
-  const data = fs.readFileSync(absPath).toString("base64");
-  return `data:${mime};base64,${data}`;
+
+  if (mime === "image/heic") {
+    // HEIC (iPhone photos): use macOS sips to convert to JPEG
+    const { execSync } = require("child_process");
+    const tmpOut = absPath + "_converted.jpg";
+    try {
+      execSync(`sips -s format jpeg "${absPath}" --out "${tmpOut}"`, { stdio: "pipe" });
+      data = fs.readFileSync(tmpOut);
+      fs.unlinkSync(tmpOut);
+      return `data:image/jpeg;base64,${data.toString("base64")}`;
+    } catch (err) {
+      console.warn(`  ⚠ HEIC conversion failed for ${imagePath}: ${err}`);
+      return null;
+    }
+  }
+
+  return `data:${mime};base64,${data.toString("base64")}`;
 }
 
 function sleep(ms: number): Promise<void> {
@@ -123,7 +149,7 @@ async function main(): Promise<void> {
     const start = Date.now();
 
     // Load images
-    const baseImageB64 = loadImageAsDataURL(tc.base_image);
+    const baseImageB64 = await loadImageAsDataURL(tc.base_image);
     if (!baseImageB64) {
       console.log(`  ⚠ Skipped – base image not found: ${tc.base_image}`);
       results.push({
@@ -141,7 +167,7 @@ async function main(): Promise<void> {
     }
 
     const referenceImageB64 = tc.reference_image
-      ? loadImageAsDataURL(tc.reference_image)
+      ? await loadImageAsDataURL(tc.reference_image)
       : undefined;
 
     const request: EditRequest = {
